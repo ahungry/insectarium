@@ -27,11 +27,16 @@
     ::set-ticket (swap-and-set [:ticket] event)
     ::stub (swap-and-set [:stub] event)))
 
-(defn text-input [{:keys [text]}]
-  {:fx/type :text-area
-   :style {:-fx-font-family "monospace"}
-   :text text
-   :on-text-changed {:event/type ::stub}})
+(defn text-input [{:keys [label text]}]
+  {:fx/type :v-box
+   :spacing 5
+   :padding 5
+   :children
+   [{:fx/type :label :text label}
+    {:fx/type :text-area
+     :style {:-fx-font-family "monospace"}
+     :text text
+     :on-text-changed {:event/type ::stub}}]})
 
 (defn button [{:keys [text event-type]}]
   {:fx/type :button
@@ -43,6 +48,7 @@
 
 (defn ticket-list [{:keys [tickets]}]
   {:fx/type :list-view
+   :max-height 150
    :on-selected-item-changed {:event/type ::set-ticket}
    :cell-factory
    (fn [{:keys [title]}]
@@ -59,9 +65,10 @@
            :root {:fx/type :v-box
                   :alignment :center
                   :children
-                  [{:fx/type text-input :text stub}
+                  [{:fx/type text-input :label "Query params" :text stub}
                    {:fx/type search-button}
-                   {:fx/type ticket-list :tickets tickets}]}}})
+                   {:fx/type ticket-list :tickets tickets}
+                   {:fx/type text-input :label "Ticket Details" :text stub}]}}})
 
 (defn renderer []
   (fx/create-renderer
