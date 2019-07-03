@@ -1,5 +1,7 @@
 (ns gui.dao-stub)
 
+(def *opts (atom {}))
+
 (defn get-ticket [_]
   {:title "Some fake ticket"
    :description "Fix the bug"
@@ -9,6 +11,7 @@
   [(get-ticket _)
    (get-ticket _)])
 
-(defn provider []
+(defn provider! [opts]
+  (reset! *opts opts)
   {:get-ticket get-ticket
    :get-tickets get-tickets})

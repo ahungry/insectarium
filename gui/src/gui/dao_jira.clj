@@ -3,6 +3,13 @@
    [clj-http.client :as client]
    [cheshire.core :as cheshire]))
 
+(def *opts (atom {}))
+
+(defn get-domain [] (:domain @*opts))
+
+(defn get-url [url]
+  (str (get-domain) "/rest/api/2" url))
+
 (defn get-auth-token
   "The user can maintain their own token, I'm not doing auth, sorry.
 
@@ -16,8 +23,9 @@
   {:Content-Type "application/json"
    :Cookie (get-auth-token)})
 
+
 (defn http-get-ticket [id]
-  (let [url (str "https://ahungry.atlassian.net/rest/api/2/issue/" id)]
+  (let [url (get-url (str "/issue/" id))]
     (prn url)
     (->
      (client/get
@@ -57,7 +65,8 @@
 (defn get-ticket [_]
   (first (get-tickets _)))
 
-(defn provider []
+(defn provider! [opts]
+  (reset! *opts opts)
   {:get-auth-token get-auth-token
    :get-ticket get-ticket
    :get-tickets get-tickets})
