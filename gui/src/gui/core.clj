@@ -5,6 +5,7 @@
    [gui.dao-stub :as dp-stub]
    [gui.dao-jira :as dp-jira]
    )
+  (:import [javafx.application Platform])
   (:gen-class))
 
 (defn get-provider! [s opts]
@@ -14,7 +15,7 @@
     (dp-stub/provider! opts)))
 
 ;; TODO: Parse user style CLI arg for provider (string to a real provider)
-(defn -main
+(defn main
   "Provider should be the implementation for fetching tickets."
   [& args]
   (let [provider (or (first args) "stub")
@@ -23,3 +24,7 @@
     (gui.dao/set-provider! (get-provider! provider {:domain domain}))
     ;; (gui.dao/set-provider (dp-jira/provider))
     (view/main)))
+
+(defn -main [& args]
+  (Platform/setImplicitExit true)
+  (apply main args))
