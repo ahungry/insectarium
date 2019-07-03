@@ -8,10 +8,17 @@
    [javafx.scene.canvas Canvas]))
 
 (def *state (atom {:stub nil
+                   :ticket nil
                    :tickets []}))
+
+(defn set-ticket [ticket]
+  (swap! *state assoc-in [:ticket] ticket))
 
 (defn set-tickets [tickets]
   (swap! *state assoc-in [:tickets] tickets))
+
+(defn set-ticket-from-state [{:keys [stub]}]
+  (set-ticket (dao/get-ticket {:stub stub})))
 
 (defn set-tickets-from-state [{:keys [stub]}]
   (set-tickets (dao/get-tickets {:stub stub})))
@@ -19,12 +26,14 @@
 (defn swap-and-set [xs event]
   (->
    (swap! *state assoc-in xs (:fx/event event))
-   set-tickets-from-state))
+   set-tickets-from-state
+   set-ticket-from-state))
 
 (defn event-handler [event]
   (case (:event/type event)
     ::search (set-tickets-from-state @*state)
-    ::set-ticket (swap-and-set [:ticket] event)
+    ::set-ticket-id (swap-and-set [:ticket] event)
+    ::set-ticket (set-ticket-from-state @*state)
     ::stub (swap-and-set [:stub] event)))
 
 (defn text-input [{:keys [label text]}]
@@ -43,19 +52,22 @@
    :text text
    :on-action {:event/type event-type}})
 
+(defn ticket-button [& r]
+  (button {:text "Update" :event-type ::search}))
+
 (defn search-button [& r]
   (button {:text "Search" :event-type ::search}))
 
 (defn ticket-list [{:keys [tickets]}]
   {:fx/type :list-view
    :max-height 150
-   :on-selected-item-changed {:event/type ::set-ticket}
+   :on-selected-item-changed {:event/type ::set-ticket-id}
    :cell-factory
-   (fn [{:keys [title]}]
-     {:text title})
+   (fn [{:keys [id title]}]
+     {:text (format "%s %s" id title)})
    :items tickets})
 
-(defn root [{:keys [stub tickets]}]
+(defn root [{:keys [stub ticket tickets]}]
   {:fx/type :stage
    :showing true
    :title "insectarium"
@@ -68,7 +80,9 @@
                   [{:fx/type text-input :label "Query params" :text stub}
                    {:fx/type search-button}
                    {:fx/type ticket-list :tickets tickets}
-                   {:fx/type text-input :label "Ticket Details" :text stub}]}}})
+                   {:fx/type text-input :label "Ticket Details" :text (str ticket)}
+                   {:fx/type ticket-button}
+                   ]}}})
 
 (defn renderer []
   (fx/create-renderer
