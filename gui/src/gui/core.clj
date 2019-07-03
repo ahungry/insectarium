@@ -7,9 +7,15 @@
    )
   (:gen-class))
 
+;; TODO: Parse user style CLI arg for provider (string to a real provider)
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Provider should be the implementation for fetching tickets."
   [& args]
-  (println "Hello, World!")
-  (gui.dao/set-provider (dp-stub/provider))
-  (view/main))
+  (prn args)
+  (let [provider (or (first args)
+                     (dp-stub/provider))]
+    (println "Hello, World!")
+    (prn provider)
+    (gui.dao/set-provider provider)
+    ;; (gui.dao/set-provider (dp-jira/provider))
+    (view/main)))

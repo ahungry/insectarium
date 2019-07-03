@@ -37,16 +37,18 @@
    :title (some-> m :fields :summary)
    :id (some-> m :key)})
 
-(defn get-tickets [jql]
+;; TODO: Pull the jql from the state map
+(defn -get-tickets [_jql]
+  (prn "Fetching tickets...")
   (->>
-   (http-get-tickets jql)
+   (http-get-tickets "")
    (into [])
    (map jira->ticket)))
 
-(defn get-ticket []
-  {:title "Some fake ticket"
-   :description "Fix the bug"
-   :id "xx11"})
+(def get-tickets (memoize -get-tickets))
+
+(defn get-ticket [_]
+  (first (get-tickets _)))
 
 (defn provider []
   {:get-auth-token get-auth-token
