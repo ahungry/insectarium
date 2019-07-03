@@ -5,6 +5,8 @@
             :url "http://www.gnu.org/licenses/"}
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [cljfx "1.2.9"]
+                 [clj-http "3.10.0"]
+                 [cheshire "5.8.1"]
                  [org.clojure/java.jdbc "0.7.9"]
                  [org.xerial/sqlite-jdbc "3.27.2.1"]]
   :main ^:skip-aot gui.core

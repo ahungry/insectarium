@@ -2,7 +2,9 @@
   (:require
    [gui.view :as view]
    [gui.dao :as dao]
-   [gui.dao-stub :as dp-stub])
+   [gui.dao-stub :as dp-stub]
+   [gui.dao-jira :as dp-jira]
+   )
   (:gen-class))
 
 (defn -main
