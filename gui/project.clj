@@ -11,4 +11,5 @@
                  [org.xerial/sqlite-jdbc "3.27.2.1"]]
   :main ^:skip-aot gui.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all
+                       :injections [(javafx.application.Platform/exit)]}})

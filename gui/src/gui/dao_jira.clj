@@ -37,10 +37,10 @@
 (defn http-get-tickets [jql]
   (->
    (client/post
-    "https://ahungry.atlassian.net/rest/api/2/search"
+    (get-url "/search")
     {:headers (get-headers)
      :body (cheshire/generate-string
-            {:maxResults 500
+            {:maxResults 2
              :jql jql})
      ;; :body {:maxResults 3
      ;;        :jql jql}
