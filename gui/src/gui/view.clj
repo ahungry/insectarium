@@ -23,6 +23,9 @@
 (defn set-tickets-from-state [{:keys [stub]}]
   (set-tickets (dao/get-tickets {:stub stub})))
 
+(defn swap-and-no-set [xs event]
+  (swap! *state assoc-in xs (:fx/event event)))
+
 (defn swap-and-set [xs event]
   (->
    (swap! *state assoc-in xs (:fx/event event))
@@ -32,9 +35,9 @@
 (defn event-handler [event]
   (case (:event/type event)
     ::search (set-tickets-from-state @*state)
-    ::set-ticket-id (swap-and-set [:ticket] event)
+    ::set-ticket-id (swap-and-no-set [:ticket] event)
     ::set-ticket (set-ticket-from-state @*state)
-    ::stub (swap-and-set [:stub] event)))
+    ::stub (swap-and-no-set [:stub] event)))
 
 (defn text-input [{:keys [label text]}]
   {:fx/type :v-box
