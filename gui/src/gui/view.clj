@@ -23,6 +23,7 @@
 
 (defn event-handler [event]
   (case (:event/type event)
+    ::search (set-tickets-from-state @*state)
     ::set-ticket (swap-and-set [:ticket] event)
     ::stub (swap-and-set [:stub] event)))
 
@@ -31,6 +32,14 @@
    :style {:-fx-font-family "monospace"}
    :text text
    :on-text-changed {:event/type ::stub}})
+
+(defn button [{:keys [text event-type]}]
+  {:fx/type :button
+   :text text
+   :on-action {:event/type event-type}})
+
+(defn search-button [& r]
+  (button {:text "Search" :event-type ::search}))
 
 (defn ticket-list [{:keys [tickets]}]
   {:fx/type :list-view
@@ -51,6 +60,7 @@
                   :alignment :center
                   :children
                   [{:fx/type text-input :text stub}
+                   {:fx/type search-button}
                    {:fx/type ticket-list :tickets tickets}]}}})
 
 (defn renderer []
