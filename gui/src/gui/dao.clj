@@ -1,10 +1,14 @@
-(ns gui.dao)
+(ns gui.dao
+  (:require
+   [gui.dao-stub :as dp-stub]))
 
-(defn get-ticket []
-  {:title "Some fake ticket"
-   :description "Fix the bug"
-   :id "xx11"})
+(def provider (atom (dp-stub/provider)))
+
+(defn set-provider [x]
+  (reset! provider x))
+
+(defn get-ticket [_]
+  ((:get-ticket @provider) _))
 
 (defn get-tickets [_]
-  [(get-ticket)
-   (get-ticket)])
+  ((:get-tickets @provider) _))
