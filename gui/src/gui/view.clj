@@ -80,7 +80,15 @@
            :root {:fx/type :v-box
                   :alignment :center
                   :children
-                  [{:fx/type text-input :label "Query params" :text stub}
+                  [
+                   {:fx/type :tab-pane
+                    :tabs [
+                           {:fx/type :tab :text "Hi" :closable false
+                            :content {:fx/type :label :text "Woopie"}}
+                           {:fx/type :tab :text "There" :closable false
+                            :content {:fx/type :label :text "Doopie"}}
+                           ]}
+                   {:fx/type text-input :label "Query params" :text stub}
                    {:fx/type search-button}
                    {:fx/type ticket-list :tickets tickets}
                    {:fx/type text-input :label "Ticket Details" :text (str ticket)}
