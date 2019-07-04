@@ -44,8 +44,13 @@
 
 (defn get-ticket-tabs [] (-> @*state :ticket-tabs))
 
+(defn remove-tab [event]
+  (let [ticket-id (-> (:fx/event event) .getSource .getText)]
+    (swap! *state update-in [:ticket-tabs] (fn [xs] (filter #(not (= ticket-id %)) xs)))))
+
 (defn event-handler [event]
   (case (:event/type event)
+    ::remove-tab (remove-tab event)
     ::open-ticket (add-ticket-tab @*state)
     ::search (set-tickets-from-state @*state)
     ::set-ticket-id (swap-and-no-set [:ticket] event)
@@ -86,6 +91,7 @@
 
 (defn render-ticket-tab [ticket-id]
   {:fx/type :tab :text (str ticket-id)
+   :on-closed {:event/type ::remove-tab}
    :content {:fx/type :label :text "Coming soon"}})
 
 (defn render-ticket-tabs [main-children-map ticket-tabs]
