@@ -89,10 +89,25 @@
      {:text (format "%s %s" id title)})
    :items tickets})
 
+(defn text-input-slim [{:keys [label text]}]
+  {:fx/type :h-box
+   :children
+   [{:fx/type :label :text label}
+    {:fx/type :text-field :text text :min-width 600}]})
+
 (defn render-ticket-tab [ticket-id]
-  {:fx/type :tab :text (str ticket-id)
-   :on-closed {:event/type ::remove-tab}
-   :content {:fx/type :label :text "Coming soon"}})
+  (let [ticket (dao/get-ticket ticket-id)]
+    (prn "Rendering this ticket: " ticket-id ticket)
+    {:fx/type :tab :text (str ticket-id)
+     :on-closed {:event/type ::remove-tab}
+     :content
+     {:fx/type :v-box
+      :children
+      [
+       {:fx/type :label :text (str (:id ticket))}
+       {:fx/type text-input-slim :label "Title:" :text (:title ticket)}
+       {:fx/type text-input :label "Description:" :text (:description ticket)}
+       ]}}))
 
 (defn render-ticket-tabs [main-children-map ticket-tabs]
   (->>

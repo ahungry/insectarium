@@ -62,8 +62,10 @@
    (into [])
    (map jira->ticket)))
 
-(defn get-ticket [_]
+(defn -get-ticket [_]
   (first (get-tickets _)))
+
+(def get-ticket (memoize -get-ticket))
 
 (defn provider! [opts]
   (reset! *opts opts)
