@@ -61,6 +61,7 @@
 
 (defn text-input [{:keys [label text event-type]}]
   {:fx/type :v-box
+   :min-height 300
    :spacing 5
    :padding 5
    :children
@@ -99,9 +100,9 @@
    [{:fx/type :label :text label}
     {:fx/type :text-field :text text :min-width 600}]})
 
-(defn render-comment [{:keys [author email description] :as m}]
+(defn render-comment [{:keys [author email description date-created] :as m}]
   {:fx/type :v-box
-   :padding 10
+   :padding 3
    :children
    [
     {:fx/type :h-box
@@ -109,16 +110,18 @@
      :style {:-fx-font-family "monospace"}
      :children
      [
-      {:fx/type :label :padding 10 :text (str author)}
-      {:fx/type :label :padding 10 :text (str email)}
+      {:fx/type :label :padding 3 :text (str "by: " author)}
+      {:fx/type :label :padding 3 :text (str "<" email ">")}
+      {:fx/type :label :padding 3 :text (str " at " date-created)}
       ]}
-    {:fx/type :label
-     :padding 20
-     :min-width 600
+    {:fx/type :text-area
+     :padding 10
      :style {
-             :-fx-font-family "monospace"
+             ;; https://openjfx.io/javadoc/12/javafx.graphics/javafx/scene/doc-files/cssref.html
+             :-fx-font-family "sans-serif"
+             :-fx-font-size "12px"
              :-fx-text-fill "#333333"
-             :-fx-background-color "#999999"
+             :-fx-background-color "#eeeeee"
              }
      :text (str description)}]})
 
@@ -140,7 +143,10 @@
        {:fx/type text-input-slim :label "Title:" :text (:title ticket)}
        {:fx/type text-input :label "Description:" :text (:description ticket)}
        {:fx/type :label :text "Comments:"}
-       {:fx/type :v-box :children (map render-comment (:comments ticket))}
+       {:fx/type :scroll-pane
+        :fit-to-width true
+        :content
+        {:fx/type :v-box :children (map render-comment (:comments ticket))}}
        ]}}))
 
 (defn render-ticket-tabs [main-children-map ticket-tabs]

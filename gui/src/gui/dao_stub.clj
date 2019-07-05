@@ -2,8 +2,9 @@
 
 (def *opts (atom {}))
 
-(defn get-comment []
-  {:author "Jon Smith"
+(defn get-comment [& r]
+  {:author "Matthew Carter"
+   :date-created "2019-07-05 00:29:00"
    :email "m@ahungry.com"
    :description "blabla some fake comment"})
 
@@ -11,12 +12,13 @@
   {:title (or title "Some title here")
    :description (or description "some description here")
    :id (or id (str m))
-   :author "Jon Smith"
+   :author "Matthew Carter"
    :email "m@ahungry.com"
-   :date-created "today"
+   :date-created "2019-07-04 14:32:00"
    :resolution "Won't Fix"
    :status "Done"
-   :comments [(get-comment)]})
+   :comments
+   (map get-comment (range 1 20))})
 
 (defn get-tickets [_]
   [(get-ticket {:title "my first ticket" :description "Do the work" :id "XX-123"})
