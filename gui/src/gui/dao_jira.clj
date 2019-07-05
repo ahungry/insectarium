@@ -60,6 +60,7 @@
 (defn jira-comment->comment [m]
   {:author (some-> m :author :displayName)
    :email (some-> m :author :emailAddress)
+   :date-created (some-> m :created)
    :description (some-> m :body)})
 
 (defn jira->ticket [m]
