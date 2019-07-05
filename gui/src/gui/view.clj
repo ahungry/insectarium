@@ -7,7 +7,7 @@
    [javafx.scene.paint Color]
    [javafx.scene.canvas Canvas]))
 
-(def *state (atom {:stub nil
+(def *state (atom {:stub "assignee = currentUser()"
                    :ticket-tabs []
                    :ticket nil
                    :tickets []}))
@@ -19,10 +19,11 @@
   (swap! *state assoc-in [:tickets] tickets))
 
 (defn set-ticket-from-state [{:keys [stub]}]
-  (set-ticket (dao/get-ticket {:stub stub})))
+  (prn "Set preview pane from state: " stub)
+  (future (set-ticket (dao/get-ticket {:stub stub}))))
 
 (defn set-tickets-from-state [{:keys [stub]}]
-  (set-tickets (dao/get-tickets {:stub stub})))
+  (future (set-tickets (dao/get-tickets stub))))
 
 (defn swap-and-no-set [xs event]
   (swap! *state assoc-in xs (:fx/event event)))
@@ -95,7 +96,12 @@
    [{:fx/type :label :text label}
     {:fx/type :text-field :text text :min-width 600}]})
 
-(defn render-ticket-tab [ticket-id]
+(defn render-ticket-tab
+  "We should probably be ok without future/promise here, as the
+  get-ticket call should be memoized, and it should have already
+  kicked off when the user chose it in the list view (to pop it up in
+  the preview pane)."
+  [ticket-id]
   (let [ticket (dao/get-ticket ticket-id)]
     (prn "Rendering this ticket: " ticket-id ticket)
     {:fx/type :tab :text (str ticket-id)
@@ -107,6 +113,7 @@
        {:fx/type :label :text (str (:id ticket))}
        {:fx/type text-input-slim :label "Title:" :text (:title ticket)}
        {:fx/type text-input :label "Description:" :text (:description ticket)}
+       {:fx/type text-input :label "Comments:" :text (str (:comments ticket))}
        ]}}))
 
 (defn render-ticket-tabs [main-children-map ticket-tabs]

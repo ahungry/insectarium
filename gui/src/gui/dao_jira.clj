@@ -1,7 +1,10 @@
 (ns gui.dao-jira
   (:require
+   [gui.net :as net]
    [clj-http.client :as client]
-   [cheshire.core :as cheshire]))
+   [slingshot.slingshot :as ss]
+   [cheshire.core :as cheshire])
+  (:use [slingshot.slingshot :only [throw+ try+]]))
 
 (def *opts (atom {}))
 
@@ -24,34 +27,30 @@
   {:Content-Type "application/json"
    :Cookie (get-auth-token)})
 
-
 (defn http-get-ticket [id]
   (let [url (get-url (str "/issue/" id))]
-    (prn url)
-    (->
-     (client/get
-      url
-      {:headers (get-headers)
-       })
-     :body
-     (cheshire/parse-string true)
-     )))
+    (net/get-json url {:headers (get-headers)})))
 
-;; TODO: I thought there was a way to have clj-http auto-parse body.
 (defn http-get-tickets [jql]
-  (->
-   (client/post
-    (get-url "/search")
-    {:headers (get-headers)
-     :body (cheshire/generate-string
-            {:maxResults 2
-             :jql jql})
-     ;; :body {:maxResults 3
-     ;;        :jql jql}
-     })
-   :body
-   (cheshire/parse-string true)
-   :issues))
+  (ss/try+
+   (->
+    (net/post-json
+     (get-url "/search")
+     {:headers (get-headers)
+      :body (cheshire/generate-string
+             {:maxResults 20
+              :jql jql})}
+     )
+    :issues)
+   (catch [:status 400] {:keys [body]}
+     ;; Simulate a single 'issue' that lets the user know of the botched JQL.
+     (prn body)
+     [{
+       :key "ERROR!!!"
+       :fields {
+                :summary (str body)
+                :description (str body)}
+       }])))
 
 (defn jira-comment->comment [m]
   {:author (some-> m :author :displayName)
@@ -69,13 +68,18 @@
    :id (some-> m :key)
    :comments (some->> m :fields :comment :comments (map jira-comment->comment))})
 
-;; TODO: Pull the jql from the state map
-(defn get-tickets [_jql]
-  (prn "Fetching tickets...")
-  (->>
-   (http-get-tickets "assignee = currentUser()")
-   (into [])
-   (map jira->ticket)))
+(defn -get-tickets [jql]
+  (if (and (= (type jql) java.lang.String)
+           (> (count jql) 0))
+    (do
+      (prn "Fetching tickets with this JQL: " jql)
+      (->>
+       (http-get-tickets jql)
+       (into [])
+       (map jira->ticket)))
+    []))
+
+(def get-tickets (memoize -get-tickets))
 
 (defn -get-ticket [id]
   (->> (http-get-ticket id)
