@@ -7,8 +7,10 @@
    [javafx.scene.paint Color]
    [javafx.scene.canvas Canvas]))
 
+;; TODO: Set initial stub value from the provider
 (def *state (atom {:stub "assignee = currentUser()
-ORDER BY createdDate DESC"
+AND resolution IS EMPTY
+ORDER BY priority, createdDate DESC"
                    :direct-ticket-id nil
                    :active-tab "Main"
                    :ticket-tabs []
