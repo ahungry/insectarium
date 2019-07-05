@@ -8,6 +8,7 @@
    [javafx.scene.canvas Canvas]))
 
 (def *state (atom {:stub "assignee = currentUser()"
+                   :active-tab "Main"
                    :ticket-tabs []
                    :ticket nil
                    :tickets []}))
@@ -45,24 +46,34 @@
 
 (defn get-ticket-tabs [] (-> @*state :ticket-tabs))
 
+(defn remove-tab-by-id [ticket-id]
+  (swap! *state update-in [:ticket-tabs] (fn [xs] (filter #(not (= ticket-id %)) xs))))
+
 (defn remove-tab [event]
   (let [ticket-id (-> (:fx/event event) .getSource .getText)]
-    (swap! *state update-in [:ticket-tabs] (fn [xs] (filter #(not (= ticket-id %)) xs)))))
+    (remove-tab-by-id ticket-id)))
 
 (defn close-tab-key? [^KeyEvent key-event]
   (and (= (.getCode key-event) KeyCode/W)
        (.isControlDown key-event)))
 
 (defn remove-active-tab []
-  (prn "Yea, do it!"))
+  (prn "Try to remove the tab...")
+  (remove-tab-by-id (:active-tab @*state)))
 
 (defn key-handler [event]
   (let [^KeyEvent key-event (:fx/event event)]
     (when (close-tab-key? key-event)
       (remove-active-tab))))
 
+(defn set-active-tab [event]
+  (prn event)
+  (prn (:id event))
+  (swap! *state assoc-in [:active-tab] (:id event)))
+
 (defn event-handler [event]
   (case (:event/type event)
+    ::selected-tab (set-active-tab event)
     ::press (key-handler event)
     ::remove-tab (remove-tab event)
     ::open-ticket (add-ticket-tab @*state)
@@ -148,6 +159,8 @@
   (let [ticket (dao/get-ticket ticket-id)]
     {:fx/type :tab :text (str ticket-id)
      :on-closed {:event/type ::remove-tab}
+     :on-selection-changed {:event/type ::selected-tab
+                            :id ticket-id}
      :content
      {:fx/type :v-box
       :children
@@ -180,7 +193,7 @@
    :height 600
    :scene {:fx/type :scene
            :root {:fx/type :v-box
-                  :alignment :center
+                  ;; :alignment :top
                   :style {
                           ;; :-fx-font-family "monospace"
                           :-fx-background-color "beige"
