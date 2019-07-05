@@ -209,13 +209,23 @@ ORDER BY priority, createdDate DESC"
     {:fx/type :v-box :children (map render-comment comments)}}
    ])
 
+(defn get-ticket-from-state [ticket-id]
+  (let [ticket-key (keyword ticket-id)
+        ticket (ticket-key @*state)]
+    (if ticket
+      ticket
+      (do
+        (future
+          (swap! *state assoc-in [ticket-key] (dao/get-ticket ticket-id)))
+        {:comments []}))))
+
 (defn render-ticket-tab
   "We should probably be ok without future/promise here, as the
   get-ticket call should be memoized, and it should have already
   kicked off when the user chose it in the list view (to pop it up in
   the preview pane)."
   [ticket-id]
-  (let [ticket (dao/get-ticket ticket-id)]
+  (let [ticket (get-ticket-from-state ticket-id)]
     {:fx/type :tab :text (str ticket-id)
      :on-closed {:event/type ::remove-tab}
      :on-selection-changed {:event/type ::selected-tab
