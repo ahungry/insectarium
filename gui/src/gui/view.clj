@@ -103,13 +103,23 @@
    [
     {:fx/type :h-box
      :padding 5
+     :style {:-fx-font-family "monospace"}
      :children
      [
-      {:fx/type :label :text (str author)}
-      {:fx/type :label :text (str email)}
+      {:fx/type :label :padding 10 :text (str author)}
+      {:fx/type :label :padding 10 :text (str email)}
       ]}
-    {:fx/type :label :text (str description)}]})
+    {:fx/type :label
+     :padding 20
+     :min-width 600
+     :style {
+             :-fx-font-family "monospace"
+             :-fx-text-fill "#333333"
+             :-fx-background-color "#999999"
+             }
+     :text (str description)}]})
 
+;; TODO: Ensure we do not do all this, unless its the tab in focus.
 (defn render-ticket-tab
   "We should probably be ok without future/promise here, as the
   get-ticket call should be memoized, and it should have already
@@ -117,7 +127,6 @@
   the preview pane)."
   [ticket-id]
   (let [ticket (dao/get-ticket ticket-id)]
-    (prn "Rendering this ticket: " ticket-id ticket)
     {:fx/type :tab :text (str ticket-id)
      :on-closed {:event/type ::remove-tab}
      :content
@@ -148,6 +157,10 @@
    :scene {:fx/type :scene
            :root {:fx/type :v-box
                   :alignment :center
+                  :style {
+                          ;; :-fx-font-family "monospace"
+                          :-fx-background-color "beige"
+                          }
                   :children
                   [
                    {:fx/type :tab-pane

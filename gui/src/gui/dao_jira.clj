@@ -27,9 +27,19 @@
   {:Content-Type "application/json"
    :Cookie (get-auth-token)})
 
+(defn jira-error->ticket [m]
+  {:key "ERROR!!!"
+   :fields {
+            :summary (str m)
+            :description (str m)}})
+
 (defn http-get-ticket [id]
-  (let [url (get-url (str "/issue/" id))]
-    (net/get-json url {:headers (get-headers)})))
+  (ss/try+
+   (let [url (get-url (str "/issue/" id))]
+     (net/get-json url {:headers (get-headers)}))
+   (catch [:status 404] {:keys [body]}
+     (prn body)
+     (jira-error->ticket body))))
 
 (defn http-get-tickets [jql]
   (ss/try+
@@ -45,12 +55,7 @@
    (catch [:status 400] {:keys [body]}
      ;; Simulate a single 'issue' that lets the user know of the botched JQL.
      (prn body)
-     [{
-       :key "ERROR!!!"
-       :fields {
-                :summary (str body)
-                :description (str body)}
-       }])))
+     [(jira-error->ticket body)])))
 
 (defn jira-comment->comment [m]
   {:author (some-> m :author :displayName)
