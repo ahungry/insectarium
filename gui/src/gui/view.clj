@@ -96,6 +96,20 @@
    [{:fx/type :label :text label}
     {:fx/type :text-field :text text :min-width 600}]})
 
+(defn render-comment [{:keys [author email description] :as m}]
+  {:fx/type :v-box
+   :padding 10
+   :children
+   [
+    {:fx/type :h-box
+     :padding 5
+     :children
+     [
+      {:fx/type :label :text (str author)}
+      {:fx/type :label :text (str email)}
+      ]}
+    {:fx/type :label :text (str description)}]})
+
 (defn render-ticket-tab
   "We should probably be ok without future/promise here, as the
   get-ticket call should be memoized, and it should have already
@@ -113,7 +127,8 @@
        {:fx/type :label :text (str (:id ticket))}
        {:fx/type text-input-slim :label "Title:" :text (:title ticket)}
        {:fx/type text-input :label "Description:" :text (:description ticket)}
-       {:fx/type text-input :label "Comments:" :text (str (:comments ticket))}
+       {:fx/type :label :text "Comments:"}
+       {:fx/type :v-box :children (map render-comment (:comments ticket))}
        ]}}))
 
 (defn render-ticket-tabs [main-children-map ticket-tabs]
