@@ -54,6 +54,12 @@ ORDER BY priority, createdDate DESC"
   (let [ticket-id (:id ticket)]
     (add-ticket-tab-by-id ticket-id)))
 
+(defn add-ticket-tab-all
+  "Try to open a new tab for every ticket in the user list of items."
+  []
+  (let [ticket-ids (map :id (:tickets @*state))]
+    (doall (map add-ticket-tab-by-id ticket-ids))))
+
 (defn add-browser-tab-by-id [ticket-id]
   (when ticket-id
     (clojure.java.shell/sh "firefox" (dao/get-browser-url ticket-id))))
@@ -105,6 +111,7 @@ ORDER BY priority, createdDate DESC"
     ::press (key-handler event)
     ::remove-tab (remove-tab event)
     ::open-ticket (add-ticket-tab @*state)
+    ::open-ticket-all (add-ticket-tab-all)
     ::open-browser (add-browser-tab @*state)
     ::search (set-tickets-from-state @*state)
     ::set-ticket-id (swap-and-no-set [:ticket] event)
@@ -130,6 +137,10 @@ ORDER BY priority, createdDate DESC"
    :style {:-fx-background-color "slategray"
            :-fx-text-fill "#ffffff"}
    :on-action {:event/type event-type}})
+
+(defn ticket-button-all [{:keys [text tickets]} ]
+  (button {:text (str "Open all " (count tickets) " tickets in Tabs " text)
+           :event-type ::open-ticket-all}))
 
 (defn ticket-button [{:keys [text]} ]
   (button {:text (str "Open in Tab " text) :event-type ::open-ticket}))
@@ -259,6 +270,7 @@ ORDER BY priority, createdDate DESC"
                          {:fx/type :v-box
                           :children
                           [{:fx/type ticket-button}
+                           {:fx/type ticket-button-all :tickets tickets}
                            {:fx/type browser-button}]}
                          {:fx/type ticket-list :tickets tickets}]}
                        {:fx/type :label :text (str "Status: " (:status ticket))}
