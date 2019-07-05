@@ -73,6 +73,9 @@
 (defn button [{:keys [text event-type]}]
   {:fx/type :button
    :text text
+   :padding 5
+   :style {:-fx-background-color "slategray"
+           :-fx-text-fill "#ffffff"}
    :on-action {:event/type event-type}})
 
 (defn ticket-button [{:keys [text]} ]
@@ -144,6 +147,8 @@
   (->>
    (concat
     [{:fx/type :tab :text "Main" :closable false
+      :style {:-fx-background-color "#ffffff"
+              :-fx-font "16px monospace"}
       :content main-children-map}]
     (map render-ticket-tab ticket-tabs))
    (into [])))
@@ -171,8 +176,12 @@
                       [
                        {:fx/type text-input :label "Query params" :text stub :event-type ::stub}
                        {:fx/type search-button}
-                       {:fx/type ticket-list :tickets tickets}
-                       {:fx/type ticket-button}
+                       {:fx/type :h-box
+                        :alignment :center
+                        :padding 30
+                        :children
+                        [{:fx/type ticket-button}
+                         {:fx/type ticket-list :tickets tickets}]}
                        {:fx/type text-input :label "Ticket Preview" :text (:description ticket)}]}
                      ticket-tabs)}
                    ]}}})
