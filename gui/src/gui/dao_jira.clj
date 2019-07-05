@@ -5,6 +5,7 @@
 
 (def *opts (atom {}))
 
+(defn set-domain [s] (swap! *opts assoc-in [:domain] s))
 (defn get-domain [] (:domain @*opts))
 
 (defn get-url [url]
@@ -31,7 +32,10 @@
      (client/get
       url
       {:headers (get-headers)
-       }))))
+       })
+     :body
+     (cheshire/parse-string true)
+     )))
 
 ;; TODO: I thought there was a way to have clj-http auto-parse body.
 (defn http-get-tickets [jql]
@@ -49,10 +53,21 @@
    (cheshire/parse-string true)
    :issues))
 
+(defn jira-comment->comment [m]
+  {:author (some-> m :author :displayName)
+   :email (some-> m :author :emailAddress)
+   :description (some-> m :body)})
+
 (defn jira->ticket [m]
   {:description (some-> m :fields :description)
+   :author (some-> m :fields :creator :displayName)
+   :email (some-> m :fields :creator :emailAddress)
+   :date-created (some-> m :fields :created)
+   :resolution (some-> m :fields :resolution)
+   :status (some-> m :fields :status :name)
    :title (some-> m :fields :summary)
-   :id (some-> m :key)})
+   :id (some-> m :key)
+   :comments (some->> m :fields :comment :comments (map jira-comment->comment))})
 
 ;; TODO: Pull the jql from the state map
 (defn get-tickets [_jql]
@@ -62,8 +77,9 @@
    (into [])
    (map jira->ticket)))
 
-(defn -get-ticket [_]
-  (first (get-tickets _)))
+(defn -get-ticket [id]
+  (->> (http-get-ticket id)
+       jira->ticket))
 
 (def get-ticket (memoize -get-ticket))
 
