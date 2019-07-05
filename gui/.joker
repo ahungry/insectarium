@@ -1,0 +1,3 @@
+;; -*- mode: clojure -*-
+
+{:known-namespaces [clojure.java.shell]}
