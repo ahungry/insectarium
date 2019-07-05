@@ -1,5 +1,7 @@
 ;; -*- mode: clojure -*-
 
 ;; https://github.com/candid82/joker
+{:known-macros
+ [[slingshot.slingshot/try+ [catch]]]}
 
 ;; {:known-namespaces [clojure.java.shell]}
