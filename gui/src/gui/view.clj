@@ -77,6 +77,10 @@ ORDER BY priority, createdDate DESC"
   (let [ticket-id (-> (:fx/event event) .getSource .getText)]
     (remove-tab-by-id ticket-id)))
 
+(defn close-ticket-tab-all []
+  (let [ticket-ids (get-ticket-tabs)]
+    (doall (map remove-tab-by-id ticket-ids))))
+
 (defn close-tab-key? [^KeyEvent key-event]
   (and (= (.getCode key-event) KeyCode/W)
        (.isControlDown key-event)))
@@ -111,6 +115,7 @@ ORDER BY priority, createdDate DESC"
     ::press (key-handler event)
     ::remove-tab (remove-tab event)
     ::open-ticket (add-ticket-tab @*state)
+    ::close-ticket-all (close-ticket-tab-all)
     ::open-ticket-all (add-ticket-tab-all)
     ::open-browser (add-browser-tab @*state)
     ::search (set-tickets-from-state @*state)
@@ -137,6 +142,10 @@ ORDER BY priority, createdDate DESC"
    :style {:-fx-background-color "slategray"
            :-fx-text-fill "#ffffff"}
    :on-action {:event/type event-type}})
+
+(defn ticket-button-close-all [_]
+  (button {:text "Close all open tabs "
+           :event-type ::close-ticket-all}))
 
 (defn ticket-button-all [{:keys [text tickets]} ]
   (button {:text (str "Open all " (count tickets) " tickets in Tabs " text)
@@ -281,6 +290,7 @@ ORDER BY priority, createdDate DESC"
                           :children
                           [{:fx/type ticket-button}
                            {:fx/type ticket-button-all :tickets tickets}
+                           {:fx/type ticket-button-close-all :tickets tickets}
                            {:fx/type browser-button}]}
                          {:fx/type ticket-list :tickets tickets}]}
                        {:fx/type :label :text (str "Status: " (:status ticket))}
