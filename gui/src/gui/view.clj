@@ -49,8 +49,21 @@
   (let [ticket-id (-> (:fx/event event) .getSource .getText)]
     (swap! *state update-in [:ticket-tabs] (fn [xs] (filter #(not (= ticket-id %)) xs)))))
 
+(defn close-tab-key? [^KeyEvent key-event]
+  (and (= (.getCode key-event) KeyCode/W)
+       (.isControlDown key-event)))
+
+(defn remove-active-tab []
+  (prn "Yea, do it!"))
+
+(defn key-handler [event]
+  (let [^KeyEvent key-event (:fx/event event)]
+    (when (close-tab-key? key-event)
+      (remove-active-tab))))
+
 (defn event-handler [event]
   (case (:event/type event)
+    ::press (key-handler event)
     ::remove-tab (remove-tab event)
     ::open-ticket (add-ticket-tab @*state)
     ::search (set-tickets-from-state @*state)
@@ -172,6 +185,7 @@
                           ;; :-fx-font-family "monospace"
                           :-fx-background-color "beige"
                           }
+                  :on-key-pressed {:event/type ::press}
                   :children
                   [
                    {:fx/type :tab-pane
