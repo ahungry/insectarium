@@ -1,5 +1,6 @@
 (ns gui.view
   (:require
+   [clojure.java.shell]
    [cljfx.api :as fx]
    [gui.dao :as dao])
   (:import
@@ -16,6 +17,8 @@ ORDER BY priority, createdDate DESC"
                    :ticket-tabs []
                    :ticket nil
                    :tickets []}))
+
+(defn get-active-tab [] (:active-tab @*state))
 
 (defn set-ticket [ticket]
   (swap! *state assoc-in [:ticket] ticket))
@@ -180,7 +183,21 @@ ORDER BY priority, createdDate DESC"
              }
      :text (str description)}]})
 
-;; TODO: Ensure we do not do all this, unless its the tab in focus.
+(defn get-ticket-tab-children [{:keys [id description comments title]}]
+  [
+   {:fx/type :label :text (str id)}
+   {:fx/type text-input-slim
+    :event-type ::set-direct-ticket-id
+    :label "Title:"
+    :text title}
+   {:fx/type text-input :label "Description:" :text description}
+   {:fx/type :label :text "Comments:"}
+   {:fx/type :scroll-pane
+    :fit-to-width true
+    :content
+    {:fx/type :v-box :children (map render-comment comments)}}
+   ])
+
 (defn render-ticket-tab
   "We should probably be ok without future/promise here, as the
   get-ticket call should be memoized, and it should have already
@@ -195,19 +212,8 @@ ORDER BY priority, createdDate DESC"
      :content
      {:fx/type :v-box
       :children
-      [
-       {:fx/type :label :text (str (:id ticket))}
-       {:fx/type text-input-slim
-        :event-type ::set-direct-ticket-id
-        :label "Title:"
-        :text (:title ticket)}
-       {:fx/type text-input :label "Description:" :text (:description ticket)}
-       {:fx/type :label :text "Comments:"}
-       {:fx/type :scroll-pane
-        :fit-to-width true
-        :content
-        {:fx/type :v-box :children (map render-comment (:comments ticket))}}
-       ]}}))
+      (get-ticket-tab-children ticket)
+      }}))
 
 (defn render-ticket-tabs [main-children-map ticket-tabs]
   (->>
@@ -255,6 +261,7 @@ ORDER BY priority, createdDate DESC"
                           [{:fx/type ticket-button}
                            {:fx/type browser-button}]}
                          {:fx/type ticket-list :tickets tickets}]}
+                       {:fx/type :label :text (str "Status: " (:status ticket))}
                        {:fx/type text-input :label "Ticket Preview" :text (:description ticket)}]}
                      ticket-tabs)}
                    ]}}})

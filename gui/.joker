@@ -2,4 +2,4 @@
 
 ;; https://github.com/candid82/joker
 
-{:known-namespaces [clojure.java.shell]}
+;; {:known-namespaces [clojure.java.shell]}
