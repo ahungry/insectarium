@@ -7,6 +7,9 @@
 (defn set-provider! [x]
   (reset! *provider x))
 
+(defn get-browser-url [_]
+  ((:get-browser-url @*provider) _))
+
 (defn get-ticket [_]
   ((:get-ticket @*provider) _))
 

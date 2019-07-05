@@ -11,6 +11,9 @@
 (defn set-domain [s] (swap! *opts assoc-in [:domain] s))
 (defn get-domain [] (:domain @*opts))
 
+(defn get-browser-url [ticket-id]
+  (str (get-domain) "/browse/" ticket-id))
+
 (defn get-url [url]
   (str (get-domain) "/rest/api/2" url))
 
@@ -96,5 +99,6 @@
 (defn provider! [opts]
   (reset! *opts opts)
   {:get-auth-token get-auth-token
+   :get-browser-url get-browser-url
    :get-ticket get-ticket
    :get-tickets get-tickets})

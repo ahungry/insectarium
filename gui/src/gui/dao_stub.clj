@@ -2,6 +2,8 @@
 
 (def *opts (atom {}))
 
+(defn get-browser-url [_] "http://example.com")
+
 (defn get-comment [& r]
   {:author "Matthew Carter"
    :date-created "2019-07-05 00:29:00"
@@ -28,4 +30,5 @@
 (defn provider! [opts]
   (reset! *opts opts)
   {:get-ticket get-ticket
+   :get-browser-url get-browser-url
    :get-tickets get-tickets})
