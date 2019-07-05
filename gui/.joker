@@ -1,3 +1,5 @@
 ;; -*- mode: clojure -*-
 
+;; https://github.com/candid82/joker
+
 {:known-namespaces [clojure.java.shell]}
