@@ -33,7 +33,7 @@ Then you can run against Jira as such (make sure to add some type of
 jira authentication, such as a jira cookie into /tmp/token.txt):
 
 ```
-lein run "jira" "https://ahungry.atlassian.net"
+lein run "jira" "https://<your jira here>.atlassian.net"
 ```
 
 ## Run for github
