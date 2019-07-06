@@ -1,5 +1,14 @@
 # insectarium
 
+> An insectarium is a live bug zoo, or a museum or exhibit of live bugs.
+
+This is a native desktop GUI for bug tracking.
+
+Many of the web interfaces are slow and clunky, while the APIs
+supporting them are fast.  This aims to be a streamlined way to
+work your day to day tickets, without all the clutter and distraction
+the web interfaces thrust on our lives.
+
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
@@ -12,11 +21,6 @@
 - [License](#license)
 
 <!-- markdown-toc end -->
-
-
-> An insectarium is a live bug zoo, or a museum or exhibit of live bugs.
-
-This is a GUI for bug tracking.
 
 ![insectarium](https://github.com/ahungry/insectarium/blob/master/insectarium.png)
 
