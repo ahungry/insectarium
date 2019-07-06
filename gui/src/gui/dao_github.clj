@@ -36,7 +36,7 @@
 ;; The :as :json option does not seem to work with github response :shrug:
 (defn http-get-tickets []
   (-> (client/get
-       (get-url "/issues")
+       (get-url "/issues?filter=all")
        {:headers (get-headers)
         :basic-auth (get-auth-token)})
       :body
