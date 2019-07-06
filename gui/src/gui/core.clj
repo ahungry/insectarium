@@ -4,6 +4,7 @@
    [gui.dao :as dao]
    [gui.dao-stub :as dp-stub]
    [gui.dao-jira :as dp-jira]
+   [gui.dao-github :as dp-github]
    )
   (:import [javafx.application Platform])
   (:gen-class))
@@ -11,6 +12,7 @@
 (defn get-provider! [s opts]
   (case s
     "jira" (dp-jira/provider! opts)
+    "github" (dp-github/provider! opts)
     "stub" (dp-stub/provider! opts)
     (dp-stub/provider! opts)))
 
