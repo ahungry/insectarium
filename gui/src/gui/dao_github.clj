@@ -14,7 +14,7 @@
 (defn get-domain [] (:domain @*opts))
 
 (defn get-browser-url [ticket-id]
-  (str (get-domain) "/browse/" ticket-id))
+  ticket-id)
 
 (defn get-url [url]
   (str (get-domain) url))
