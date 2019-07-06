@@ -13,6 +13,7 @@
 AND resolution IS EMPTY
 ORDER BY priority, createdDate DESC"
                    :direct-ticket-id nil
+                   :fast-filter ""
                    :active-tab "Main"
                    :ticket-tabs []
                    :ticket nil
@@ -111,6 +112,7 @@ ORDER BY priority, createdDate DESC"
   (case (:event/type event)
     ::set-direct-ticket-id (swap-and-no-set [:direct-ticket-id] event)
     ::text-input-slim-key (key-handler-text-input-slim event)
+    ::set-fast-filter (swap-and-no-set [:fast-filter] event)
     ::selected-tab (set-active-tab event)
     ::press (key-handler event)
     ::remove-tab (remove-tab event)
@@ -160,14 +162,21 @@ ORDER BY priority, createdDate DESC"
 (defn search-button [& r]
   (button {:text "Search" :event-type ::search}))
 
+(defn get-fast-filter []
+  (:fast-filter @*state))
+
+(defn get-fast-filtered-tickets [tickets]
+  (filter #(re-find (re-pattern (str "(?i)" (get-fast-filter))) (:title %)) tickets))
+
 (defn ticket-list [{:keys [tickets]}]
   {:fx/type :list-view
    :max-height 150
+   :min-width 500
    :on-selected-item-changed {:event/type ::set-ticket-id}
    :cell-factory
    (fn [{:keys [id title]}]
      {:text (format "%s %s" id title)})
-   :items tickets})
+   :items (get-fast-filtered-tickets tickets)})
 
 (defn text-input-slim [{:keys [label text event-type]}]
   {:fx/type :h-box
@@ -255,7 +264,7 @@ ORDER BY priority, createdDate DESC"
     (map render-ticket-tab ticket-tabs))
    (into [])))
 
-(defn root [{:keys [direct-ticket-id stub ticket ticket-tabs tickets]}]
+(defn root [{:keys [direct-ticket-id fast-filter stub ticket ticket-tabs tickets]}]
   {:fx/type :stage
    :showing true
    :title "insectarium"
@@ -284,8 +293,13 @@ ORDER BY priority, createdDate DESC"
                         :padding 30
                         :children
                         [
-                         {:fx/type text-input-slim :label "Ticket ID (press Enter to open): "
-                          :text direct-ticket-id :event-type ::set-direct-ticket-id}
+                         {:fx/type :v-box
+                          :children
+                          [
+                           {:fx/type text-input-slim :label "Ticket ID (press Enter to open): "
+                            :text direct-ticket-id :event-type ::set-direct-ticket-id}
+                           {:fx/type text-input-slim :label "Fast Filter (narrow list)"
+                            :text fast-filter :event-type ::set-fast-filter}]}
                          {:fx/type :v-box
                           :children
                           [{:fx/type ticket-button}
