@@ -2,7 +2,8 @@
   (:require
    [clojure.java.shell]
    [cljfx.api :as fx]
-   [gui.dao :as dao])
+   [gui.dao :as dao]
+   [gui.util :as util])
   (:import
    [javafx.scene.input KeyCode KeyEvent]
    [javafx.scene.paint Color]
@@ -66,7 +67,7 @@ ORDER BY priority, createdDate DESC"
 (defn add-ticket-tab-all
   "Try to open a new tab for every ticket in the user list of items."
   []
-  (let [ticket-ids (map :id (:tickets @*state))]
+  (let [ticket-ids (map :id (:tickets-filtered @*state))]
     (doall (map add-ticket-tab-by-id ticket-ids))))
 
 (defn add-browser-tab-by-id [ticket-id]
@@ -121,8 +122,8 @@ ORDER BY priority, createdDate DESC"
 
 (defn get-fast-filtered-tickets [tickets]
   (filter
-   #(re-find (re-pattern (str "(?i)" (get-fast-filter)))
-             (str (:id %) (:title %)))
+   #(util/all-matching? (get-fast-filter)
+                        (str (:id %) (:title %)))
    tickets))
 
 (defn swap-and-set-fast-filter [event]
@@ -319,7 +320,7 @@ ORDER BY priority, createdDate DESC"
                          {:fx/type :v-box
                           :children
                           [{:fx/type ticket-button}
-                           {:fx/type ticket-button-all :tickets tickets}
+                           {:fx/type ticket-button-all :tickets tickets-filtered}
                            {:fx/type ticket-button-close-all :tickets tickets}
                            {:fx/type browser-button}]}
                          {:fx/type ticket-list :tickets-filtered tickets-filtered}]}
