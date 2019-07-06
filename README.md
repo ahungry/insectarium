@@ -20,6 +20,35 @@ or it will not work with the supporting lib (cljfx).
 sudo archlinux-java set java-12-openjdk
 ```
 
+Then you can install deps and run as follows:
+
+```
+cd gui
+lein deps
+```
+
+## Run for jira
+
+Then you can run against Jira as such (make sure to add some type of
+jira authentication, such as a jira cookie into /tmp/token.txt):
+
+```
+lein run "jira" "https://ahungry.atlassian.net"
+```
+
+## Run for github
+
+Then you can run against Github as such (make sure to add some type of
+github authentication, such as a github user:password for basic auth, into /tmp/token.txt):
+
+```
+lein run "github"
+```
+
+# TODO
+
+- Add proper authentication (OAuth support) for the various providers
+
 # License
 
 Copyright © 2019 Matthew Carter <m@ahungry.com>
