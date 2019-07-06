@@ -1,5 +1,19 @@
 # insectarium
 
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
+
+- [insectarium](#insectarium)
+- [Currently supported/being added](#currently-supportedbeing-added)
+- [Setup](#setup)
+    - [Run for jira](#run-for-jira)
+    - [Run for github](#run-for-github)
+- [TODO](#todo)
+- [License](#license)
+
+<!-- markdown-toc end -->
+
+
 > An insectarium is a live bug zoo, or a museum or exhibit of live bugs.
 
 This is a GUI for bug tracking.
