@@ -9,16 +9,22 @@
    [javafx.scene.canvas Canvas]))
 
 ;; TODO: Set initial stub value from the provider
-(def *state (atom {:stub "assignee = currentUser()
+(def state-defaults
+  {:stub "assignee = currentUser()
 AND resolution IS EMPTY
 ORDER BY priority, createdDate DESC"
-                   :direct-ticket-id nil
-                   :fast-filter ""
-                   :active-tab "Main"
-                   :ticket-tabs []
-                   :ticket nil
-                   :tickets-filtered []
-                   :tickets []}))
+   :direct-ticket-id nil
+   :fast-filter ""
+   :active-tab "Main"
+   :ticket-tabs []
+   :ticket nil
+   :tickets-filtered []
+   :tickets []})
+
+(def *state (atom state-defaults))
+
+(defn state-defaults! []
+  (reset! *state state-defaults))
 
 (defn get-active-tab [] (:active-tab @*state))
 
@@ -26,6 +32,7 @@ ORDER BY priority, createdDate DESC"
   (swap! *state assoc-in [:ticket] ticket))
 
 (defn set-tickets [tickets]
+  (swap! *state assoc-in [:tickets-filtered] tickets)
   (swap! *state assoc-in [:tickets] tickets))
 
 (defn set-ticket-from-state [{:keys [stub]}]
@@ -327,6 +334,7 @@ ORDER BY priority, createdDate DESC"
    :opts {:fx.opt/map-event-handler event-handler}))
 
 (defn main [& args]
+  (state-defaults!)
   (set-tickets-from-state *state)
   (swap-and-set-fast-filter "")
   (fx/mount-renderer *state (renderer)))
