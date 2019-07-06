@@ -39,7 +39,7 @@ lein run "jira" "https://<your jira here>.atlassian.net"
 ## Run for github
 
 Then you can run against Github as such (make sure to add some type of
-github authentication, such as a github user:password for basic auth, into /tmp/token.txt):
+github authentication, such as a github `user:password` for basic auth, into /tmp/token.txt):
 
 ```
 lein run "github"
