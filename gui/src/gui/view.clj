@@ -17,6 +17,7 @@ ORDER BY priority, createdDate DESC"
                    :active-tab "Main"
                    :ticket-tabs []
                    :ticket nil
+                   :tickets-filtered []
                    :tickets []}))
 
 (defn get-active-tab [] (:active-tab @*state))
@@ -108,11 +109,25 @@ ORDER BY priority, createdDate DESC"
   (prn (:id event))
   (swap! *state assoc-in [:active-tab] (:id event)))
 
+(defn get-fast-filter []
+  (:fast-filter @*state))
+
+(defn get-fast-filtered-tickets [tickets]
+  (filter
+   #(re-find (re-pattern (str "(?i)" (get-fast-filter)))
+             (str (:id %) (:title %)))
+   tickets))
+
+(defn swap-and-set-fast-filter [event]
+  (swap-and-no-set [:fast-filter] event)
+  (swap! *state assoc-in [:tickets-filtered]
+         (get-fast-filtered-tickets (:tickets @*state))))
+
 (defn event-handler [event]
   (case (:event/type event)
     ::set-direct-ticket-id (swap-and-no-set [:direct-ticket-id] event)
     ::text-input-slim-key (key-handler-text-input-slim event)
-    ::set-fast-filter (swap-and-no-set [:fast-filter] event)
+    ::set-fast-filter (swap-and-set-fast-filter event)
     ::selected-tab (set-active-tab event)
     ::press (key-handler event)
     ::remove-tab (remove-tab event)
@@ -162,13 +177,7 @@ ORDER BY priority, createdDate DESC"
 (defn search-button [& r]
   (button {:text "Search" :event-type ::search}))
 
-(defn get-fast-filter []
-  (:fast-filter @*state))
-
-(defn get-fast-filtered-tickets [tickets]
-  (filter #(re-find (re-pattern (str "(?i)" (get-fast-filter))) (:title %)) tickets))
-
-(defn ticket-list [{:keys [tickets]}]
+(defn ticket-list [{:keys [tickets-filtered]}]
   {:fx/type :list-view
    :max-height 150
    :min-width 500
@@ -176,7 +185,7 @@ ORDER BY priority, createdDate DESC"
    :cell-factory
    (fn [{:keys [id title]}]
      {:text (format "%s %s" id title)})
-   :items (get-fast-filtered-tickets tickets)})
+   :items tickets-filtered})
 
 (defn text-input-slim [{:keys [label text event-type]}]
   {:fx/type :h-box
@@ -264,7 +273,7 @@ ORDER BY priority, createdDate DESC"
     (map render-ticket-tab ticket-tabs))
    (into [])))
 
-(defn root [{:keys [direct-ticket-id fast-filter stub ticket ticket-tabs tickets]}]
+(defn root [{:keys [direct-ticket-id fast-filter stub ticket ticket-tabs tickets tickets-filtered]}]
   {:fx/type :stage
    :showing true
    :title "insectarium"
@@ -306,7 +315,7 @@ ORDER BY priority, createdDate DESC"
                            {:fx/type ticket-button-all :tickets tickets}
                            {:fx/type ticket-button-close-all :tickets tickets}
                            {:fx/type browser-button}]}
-                         {:fx/type ticket-list :tickets tickets}]}
+                         {:fx/type ticket-list :tickets-filtered tickets-filtered}]}
                        {:fx/type :label :text (str "Status: " (:status ticket))}
                        {:fx/type text-input :label "Ticket Preview" :text (:description ticket)}]}
                      ticket-tabs)}
@@ -319,4 +328,5 @@ ORDER BY priority, createdDate DESC"
 
 (defn main [& args]
   (set-tickets-from-state *state)
+  (swap-and-set-fast-filter "")
   (fx/mount-renderer *state (renderer)))
