@@ -4,6 +4,13 @@
 
 This is a GUI for bug tracking.
 
+![insectarium](https://github.com/ahungry/insectarium/blob/master/insectarium.png)
+
+# Currently supported/being added
+
+- Jira Tickets
+- Github Issues
+
 # Setup
 
 If using Arch Linux, ensure you are using java 12 which has openjfx,
