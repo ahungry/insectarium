@@ -30,7 +30,7 @@
    ;; |___/\__,_/__/_\__| /_/ \_\_,_|\__|_||_|
    ;; Method will be basic for now - although maybe Authorization: Bearer for Oauth based
    ;; flows will come later.
-   ;; :method :basic
+   :method :basic
 
    ;; Use your username, duh!
    :username "example@example.com"
