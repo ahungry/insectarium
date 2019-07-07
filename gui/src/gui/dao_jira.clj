@@ -1,12 +1,20 @@
 (ns gui.dao-jira
   (:require
    [gui.net :as net]
+   [gui.config :as config]
    ;; [clj-http.client :as client]
    [slingshot.slingshot :as ss]
    [cheshire.core :as cheshire])
   (:use [slingshot.slingshot :only [throw+ try+]]))
 
 (def *opts (atom {}))
+
+(defn config->opts!
+  "Pull in the active config settings and put them in the provider opts."
+  []
+  (reset! *opts
+          {:domain (config/get-domain)
+           :auth (config/get-auth)}))
 
 (defn set-domain [s] (swap! *opts assoc-in [:domain] s))
 (defn get-domain [] (:domain @*opts))
