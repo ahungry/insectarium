@@ -1,14 +1,20 @@
 (ns gui.dao-github
   (:require
    [gui.net :as net]
+   [gui.config :as config]
    [clj-http.client :as client]
    [slingshot.slingshot :as ss]
    [cheshire.core :as cheshire])
   (:use [slingshot.slingshot :only [throw+ try+]]))
 
-(def *opts (atom {
-                  :domain "https://api.github.com"
-                  }))
+(def *opts (atom {}))
+
+(defn config->opts!
+  "Pull in the active config settings and put them in the provider opts."
+  []
+  (reset! *opts
+          {:domain (config/get-domain)
+           :auth (config/get-auth)}))
 
 (defn set-domain [s] (swap! *opts assoc-in [:domain] s))
 (defn get-domain [] (:domain @*opts))
@@ -19,26 +25,34 @@
 (defn get-url [url]
   (str (get-domain) url))
 
-(defn get-auth-token
-  "This should be for basic auth - a user/password in format:
+(defn get-auth-token [] (-> @*opts :auth :cookie))
+(defn get-auth-method [] (-> @*opts :auth :method))
+(defn basic-auth? [] (= :basic  (get-auth-method)))
+(defn cookie-auth? [] (= :cookie  (get-auth-method)))
 
-  user:pass
+(defn maybe-cookie-auth [m]
+  (if (cookie-auth?)
+    (conj m {:Cookie (get-auth-token)})
+    m))
 
-  More secure may be for the system to prompt for the user data and
-  just store in a variable."
-  []
-  (clojure.string/trim (slurp "/tmp/insectarium-github-token.txt")))
+(defn get-basic-auth [{:keys [username token-or-pass]}]
+  (str username ":" token-or-pass))
+
+(defn maybe-basic-auth [m]
+  (if (basic-auth?)
+    (conj m {:basic-auth (get-basic-auth (:auth @*opts))})
+    m))
 
 (defn get-headers []
-  {:Content-Type "application/json"
-   :Accept "application/json"})
+  (maybe-cookie-auth
+   {:Content-Type "application/json"
+    :Accept "application/json"}))
 
 ;; The :as :json option does not seem to work with github response :shrug:
 (defn http-get-tickets []
   (-> (client/get
        (get-url "/issues?filter=all")
-       {:headers (get-headers)
-        :basic-auth (get-auth-token)})
+       (maybe-basic-auth {:headers (get-headers)}))
       :body
       (cheshire/parse-string true)))
 

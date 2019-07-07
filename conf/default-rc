@@ -43,6 +43,36 @@
    }
   }
 
- ;; TODO: Build this out
- :github {}
+ :github
+ {
+  ;; Change this to your own domain, as you probably won't be using mine.
+  :domain "https://api.github.com"
+  :auth
+  {
+   ;;   ___          _   _         _       _   _
+   ;;  / __|___  ___| |_(_)___    /_\ _  _| |_| |_
+   ;; | (__/ _ \/ _ \ / / / -_)  / _ \ || |  _| ' \
+   ;;  \___\___/\___/_\_\_\___| /_/ \_\_,_|\__|_||_|
+   ;; If you prefer to just read in the contents of a file and send as a cookie, sure, why not.
+   ;; :method :cookie
+   ;; :cookie-file "/tmp/insectarium-github-token.txt"
+
+   ;;  ___          _        _       _   _
+   ;; | _ ) __ _ __(_)__    /_\ _  _| |_| |_
+   ;; | _ \/ _` (_-< / _|  / _ \ || |  _| ' \
+   ;; |___/\__,_/__/_\__| /_/ \_\_,_|\__|_||_|
+   ;; Method will be basic for now - although maybe Authorization: Bearer for Oauth based
+   ;; flows will come later.
+   :method :basic
+
+   ;; Use your username, duh!
+   :username "example@example.com"
+
+   ;; For security minded people, this will ask on app launch and you paste it in.
+   ;; If you're lazy / not too concerned with hard-coding a token, just add yours
+   ;; in here to avoid being asked each time (as a double quoted string).
+   ;; The API token type (see: https://github.blog/2013-05-16-personal-api-tokens/)
+   :token-or-pass :ask
+   }
+  }
  }
