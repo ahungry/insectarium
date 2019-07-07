@@ -105,7 +105,7 @@ lein run
 
 # TODO
 
-- Add proper authentication (OAuth support) for the various providers
+- Add simultaneous provider support, to use multiple providers at once.
 
 # License
 
