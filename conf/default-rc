@@ -13,7 +13,7 @@
  :jira
  {
   ;; Change this to your own domain, as you probably won't be using mine.
-  :domain "https://ahungry.atlassian.net"
+  :domain "https://example.atlassian.net"
   :auth
   {
    ;;   ___          _   _         _       _   _
@@ -21,8 +21,8 @@
    ;; | (__/ _ \/ _ \ / / / -_)  / _ \ || |  _| ' \
    ;;  \___\___/\___/_\_\_\___| /_/ \_\_,_|\__|_||_|
    ;; If you prefer to just read in the contents of a file and send as a cookie, sure, why not.
-   :method :cookie
-   :cookie-file "/tmp/insectarium-jira-token.txt"
+   ;; :method :cookie
+   ;; :cookie-file "/tmp/insectarium-jira-token.txt"
 
    ;;  ___          _        _       _   _
    ;; | _ ) __ _ __(_)__    /_\ _  _| |_| |_
@@ -33,7 +33,7 @@
    ;; :method :basic
 
    ;; Use your username, duh!
-   :username "m@ahungry.com"
+   :username "example@example.com"
 
    ;; For security minded people, this will ask on app launch and you paste it in.
    ;; If you're lazy / not too concerned with hard-coding a token, just add yours

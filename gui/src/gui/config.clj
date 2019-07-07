@@ -38,11 +38,16 @@
     {:method :cookie
      :cookie cookie}))
 
-(defn get-auth-from-rc [{:keys [method] :as m}]
+(defn maybe-throw-for-method [provider]
+  (prn provider)
+  (when (not (= :stub provider))
+    (throw (Throwable. "Unsupported :method type in :auth block of RC file!"))))
+
+(defn get-auth-from-rc [{:keys [method] :as m} provider]
   (case method
     :basic (get-auth-type-token m)
     :cookie (get-auth-type-cookie m)
-    (throw "Unsupported :method type in :auth block of RC file!")))
+    (maybe-throw-for-method provider)))
 
 (defn get-rc-file []
   (let [rc (get-rc-file-raw)
@@ -50,7 +55,7 @@
         provider (provider-name rc)
         domain (:domain provider)
         auth (:auth provider)]
-    {:auth (get-auth-from-rc auth)
+    {:auth (get-auth-from-rc auth provider-name)
      :domain domain
      :provider provider-name}))
 
