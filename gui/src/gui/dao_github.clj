@@ -77,7 +77,7 @@
   (first (get-tickets)))
 
 (defn provider! [opts]
-  ;; (reset! *opts opts)
+  (reset! *opts opts)
   {:get-auth-token get-auth-token
    :get-browser-url get-browser-url
    :get-ticket get-ticket
