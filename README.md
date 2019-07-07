@@ -93,23 +93,14 @@ https://confluence.atlassian.com/cloud/api-tokens-938839638.html
 
 See the file `conf/default-rc` for detailed setup instructions.
 
-You can run against Github as such (make sure to add some type of
-github authentication, such as a github `user:password` for basic auth, into `/tmp/insectarium-github-token.txt`):
-
 You can also use a personal access token instead of the password:
 
 https://github.blog/2013-05-16-personal-api-tokens/
 
-If you choose to, the file would end up looking similar to this:
-
-```
-example@example.com:somePasswordOrToken
-```
-
 Afterwords, you can run:
 
 ```
-lein run github
+lein run
 ```
 
 # TODO
