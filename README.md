@@ -15,8 +15,9 @@ the web interfaces thrust on our lives.
 - [insectarium](#insectarium)
 - [Currently supported/being added](#currently-supportedbeing-added)
 - [Setup](#setup)
-    - [Run for jira](#run-for-jira)
-    - [Run for github](#run-for-github)
+    - [Customizing your setup](#customizing-your-setup)
+        - [For Jira](#for-jira)
+        - [For Github](#for-github)
 - [TODO](#todo)
 - [License](#license)
 
