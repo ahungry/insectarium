@@ -27,7 +27,7 @@
   More secure may be for the system to prompt for the user data and
   just store in a variable."
   []
-  (clojure.string/trim (slurp "/tmp/token.txt")))
+  (clojure.string/trim (slurp "/tmp/insectarium-github-token.txt")))
 
 (defn get-headers []
   {:Content-Type "application/json"

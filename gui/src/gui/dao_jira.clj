@@ -24,7 +24,7 @@
 
   cloud.session.token=eyJ....mdQ"
   []
-  (slurp "/tmp/token.txt"))
+  (slurp "/tmp/insectarium-jira-token.txt"))
 
 (defn get-headers []
   {:Content-Type "application/json"

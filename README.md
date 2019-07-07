@@ -45,22 +45,48 @@ cd gui
 lein deps
 ```
 
-## Run for jira
+## For Jira
 
-Then you can run against Jira as such (make sure to add some type of
-jira authentication, such as a jira cookie into /tmp/token.txt):
+First off, you will need to ensure you have some type of
+authentication (a jira Oauth rest token, or, much easier - just copy
+your Jira cookie out of a browser session and put in a file
+Insectarium can load, such as: `/tmp/insectarium-jira-token.txt`).
+
+This will work in all Jira use cases and is in general easier to set
+up / prepare than the Oauth based flow (but note, it would be less
+secure if this file were compromised in some way, so use at your own risk).
+
+If you choose to, the file would end up looking similar to this:
 
 ```
-lein run "jira" "https://<your jira here>.atlassian.net"
+cloud.session.token=eyJ...<many characteres of token>...mdQ
 ```
 
-## Run for github
-
-Then you can run against Github as such (make sure to add some type of
-github authentication, such as a github `user:password` for basic auth, into /tmp/token.txt):
+Afterwords, you can run:
 
 ```
-lein run "github"
+lein run jira https://<your jira here>.atlassian.net
+```
+
+## For Github
+
+You can run against Github as such (make sure to add some type of
+github authentication, such as a github `user:password` for basic auth, into `/tmp/insectarium-github-token.txt`):
+
+You can also use a personal access token instead of the password:
+
+https://github.blog/2013-05-16-personal-api-tokens/
+
+If you choose to, the file would end up looking similar to this:
+
+```
+example@example.com:somePasswordOrToken
+```
+
+Afterwords, you can run:
+
+```
+lein run github
 ```
 
 # TODO
