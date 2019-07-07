@@ -68,6 +68,10 @@ Afterwords, you can run:
 lein run jira https://<your jira here>.atlassian.net
 ```
 
+Basic auth instructions here:
+
+https://confluence.atlassian.com/cloud/api-tokens-938839638.html
+
 ## For Github
 
 You can run against Github as such (make sure to add some type of

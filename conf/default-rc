@@ -1,0 +1,39 @@
+;; -*- mode: clojure -*-
+
+;; Sample config file - you should have one provider set - this will determine which
+;; source you pull your tickets from.
+
+;; If you choose to use a provider, you should declare your values (domain etc.)
+;; and how you choose to handle authentication, so that we can properly load it up.
+{
+ :provider :jira
+
+ :stub {}
+
+ :jira
+ {
+  ;; Change this to your own domain, as you probably won't be using mine.
+  :domain "https://ahungry.atlassian.net"
+  :auth
+  {
+   ;; Method will be basic for now - although maybe Authorization: Bearer for Oauth based
+   ;; flows will come later.
+   :method :basic
+
+   ;; The API token type (see: https://confluence.atlassian.com/cloud/api-tokens-938839638.html)
+   ;; Type could be token or password here, it doesn't really matter.
+   :type :token
+
+   ;; Juse your username, duh!
+   :username "m@ahungry.com"
+
+   ;; For security minded people, this will ask on app launch and you paste it in.
+   ;; If you're lazy / not too concerned with hard-coding a token, just add yours
+   ;; in here to avoid being asked each time (as a double quoted string).
+   :token :ask
+   }
+  }
+
+ ;; TODO: Build this out
+ :github {}
+ }
