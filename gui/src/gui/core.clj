@@ -1,5 +1,6 @@
 (ns gui.core
   (:require
+   [gui.config :as config]
    [gui.view :as view]
    [gui.dao :as dao]
    [gui.dao-stub :as dp-stub]
@@ -11,20 +12,22 @@
 
 (defn get-provider! [s opts]
   (case s
-    "jira" (dp-jira/provider! opts)
-    "github" (dp-github/provider! opts)
-    "stub" (dp-stub/provider! opts)
+    :jira (dp-jira/provider! opts)
+    :github (dp-github/provider! opts)
+    :stub (dp-stub/provider! opts)
     (dp-stub/provider! opts)))
 
-;; TODO: Parse user style CLI arg for provider (string to a real provider)
 (defn main
   "Provider should be the implementation for fetching tickets."
   [& args]
-  (let [provider (or (first args) "stub")
-        domain (or (second args) "http://example.com")]
+  (config/set-conf!)
+  (let [domain (config/get-domain)
+        provider (config/get-provider)]
+    (prn "Found domain: " domain)
     (prn "Found provider: " provider)
-    (gui.dao/set-provider! (get-provider! provider {:domain domain}))
-    ;; (gui.dao/set-provider (dp-jira/provider))
+    (gui.dao/set-provider!
+     (get-provider! provider {:domain domain
+                              :auth (config/get-auth)}))
     (view/main)))
 
 (defn -main [& args]

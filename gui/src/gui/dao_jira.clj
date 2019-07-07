@@ -1,7 +1,7 @@
 (ns gui.dao-jira
   (:require
    [gui.net :as net]
-   [clj-http.client :as client]
+   ;; [clj-http.client :as client]
    [slingshot.slingshot :as ss]
    [cheshire.core :as cheshire])
   (:use [slingshot.slingshot :only [throw+ try+]]))
@@ -17,18 +17,28 @@
 (defn get-url [url]
   (str (get-domain) "/rest/api/2" url))
 
-(defn get-auth-token
-  "The user can maintain their own token, I'm not doing auth, sorry.
+(defn get-auth-token [] (-> @*opts :auth :cookie))
+(defn get-auth-method [] (-> @*opts :auth :method))
+(defn basic-auth? [] (= :basic  (get-auth-method)))
+(defn cookie-auth? [] (= :cookie  (get-auth-method)))
 
-  It should look like:
+(defn maybe-cookie-auth [m]
+  (if (cookie-auth?)
+    (conj m {:Cookie (get-auth-token)})
+    m))
 
-  cloud.session.token=eyJ....mdQ"
-  []
-  (slurp "/tmp/insectarium-jira-token.txt"))
+(defn get-basic-auth [{:keys [username token-or-pass]}]
+  (str username ":" token-or-pass))
+
+(defn maybe-basic-auth [m]
+  (if (basic-auth?)
+    (conj m {:basic-auth (get-basic-auth (:auth @*opts))})
+    m))
 
 (defn get-headers []
-  {:Content-Type "application/json"
-   :Cookie (get-auth-token)})
+  (maybe-cookie-auth
+   {:Content-Type "application/json"
+    :Accept "application/json"}))
 
 (defn jira-error->ticket [m]
   {:key "ERROR!!!"
@@ -39,7 +49,10 @@
 (defn http-get-ticket [id]
   (ss/try+
    (let [url (get-url (str "/issue/" id))]
-     (net/get-json url {:headers (get-headers)}))
+     (net/get-json
+      url
+      (maybe-basic-auth {:headers (get-headers)})
+      ))
    (catch [:status 404] {:keys [body]}
      (prn body)
      (jira-error->ticket body))))
@@ -49,10 +62,11 @@
    (->
     (net/post-json
      (get-url "/search")
-     {:headers (get-headers)
-      :body (cheshire/generate-string
-             {:maxResults 20
-              :jql jql})}
+     (maybe-basic-auth
+      {:headers (get-headers)
+       :body (cheshire/generate-string
+              {:maxResults 20
+               :jql jql})})
      )
     :issues)
    (catch [:status 400] {:keys [body]}
