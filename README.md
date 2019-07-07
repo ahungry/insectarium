@@ -45,16 +45,32 @@ cd gui
 lein deps
 ```
 
-## For Jira
+## Customizing your setup
 
-First off, you will need to ensure you have some type of
-authentication (a jira Oauth rest token, or, much easier - just copy
-your Jira cookie out of a browser session and put in a file
-Insectarium can load, such as: `/tmp/insectarium-jira-token.txt`).
+Please see `conf/default-rc` as your starting point.
 
-This will work in all Jira use cases and is in general easier to set
-up / prepare than the Oauth based flow (but note, it would be less
-secure if this file were compromised in some way, so use at your own risk).
+Each available provider will have a top level key to define their
+config (I may add simultaneous provider support soon, so you can view
+tickets from many sources in one centralized area).
+
+You can choose which provider by setting the key appropriately.
+
+You can add your own settings and keep them out of this repository
+directory by copying the defaults to your
+`XDG_CONFIG_HOME/insectarium/insectariumrc` or `~/.insectariumrc`
+files.
+
+### For Jira
+
+See the file `conf/default-rc` for detailed setup instructions.
+
+You will need to ensure you have some type of authentication (a jira
+API token, or, much easier - just copy your Jira cookie out of a
+browser session and put in a file Insectarium can load, such as:
+`/tmp/insectarium-jira-token.txt`), this will work in all Jira use
+cases and is in general easier to set up / prepare than the token
+based flow (but note, it would be less secure if this file were
+compromised in some way, so use at your own risk).
 
 If you choose to, the file would end up looking similar to this:
 
@@ -65,14 +81,16 @@ cloud.session.token=eyJ...<many characteres of token>...mdQ
 Afterwords, you can run:
 
 ```
-lein run jira https://<your jira here>.atlassian.net
+lein run
 ```
 
 Basic auth instructions here:
 
 https://confluence.atlassian.com/cloud/api-tokens-938839638.html
 
-## For Github
+### For Github
+
+See the file `conf/default-rc` for detailed setup instructions.
 
 You can run against Github as such (make sure to add some type of
 github authentication, such as a github `user:password` for basic auth, into `/tmp/insectarium-github-token.txt`):
