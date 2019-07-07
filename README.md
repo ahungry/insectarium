@@ -105,6 +105,7 @@ lein run
 
 # TODO
 
+- Fix github single issue view (need to show comments/map fields correctly).
 - Add simultaneous provider support, to use multiple providers at once.
 
 # License
