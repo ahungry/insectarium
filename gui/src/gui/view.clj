@@ -164,8 +164,8 @@ ORDER BY priority, createdDate DESC"
   {:fx/type :button
    :text text
    :padding padding
-   :style {:-fx-background-color "slategray"
-           :-fx-text-fill "#ffffff"}
+   ;; :style {:-fx-background-color "slategray"
+   ;;         :-fx-text-fill "#ffffff"}
    :on-action {:event/type event-type}})
 
 (defn button [{:keys [text event-type]}]
@@ -291,7 +291,35 @@ ORDER BY priority, createdDate DESC"
     (map render-ticket-tab ticket-tabs))
    (into [])))
 
-(defn root [{:keys [direct-ticket-id fast-filter stub ticket ticket-tabs tickets tickets-filtered]}]
+(defn main-tab
+  "The Main tab area (as opposed to the tabbed ticket view)."
+  [{:keys [direct-ticket-id fast-filter stub tickets-filtered tickets ticket]}]
+  {:fx/type :v-box
+   :children
+   [
+    {:fx/type text-input :label "Query params" :text stub :event-type ::stub}
+    {:fx/type :h-box
+     :padding 30
+     :children
+     [
+      {:fx/type :v-box
+       :children
+       [
+        {:fx/type search-button}
+        {:fx/type text-input-slim :label "Ticket ID (press Enter to open): "
+         :text direct-ticket-id :event-type ::set-direct-ticket-id}
+        {:fx/type text-input-slim :label "Fast Filter (narrow list)"
+         :text fast-filter :event-type ::set-fast-filter}
+        {:fx/type ticket-button}
+        {:fx/type ticket-button-all :tickets tickets-filtered}
+        {:fx/type ticket-button-close-all :tickets tickets}
+        {:fx/type browser-button}
+        ]}
+      {:fx/type ticket-list :tickets-filtered tickets-filtered}]}
+    {:fx/type :label :text (str "Status: " (:status ticket))}
+    {:fx/type text-input :label "Ticket Preview" :text (:description ticket)}]})
+
+(defn root [{:keys [ticket-tabs] :as m}]
   {:fx/type :stage
    :showing true
    :title "insectarium"
@@ -309,32 +337,7 @@ ORDER BY priority, createdDate DESC"
                   [
                    {:fx/type :tab-pane
                     :tabs
-                    (render-ticket-tabs
-                     {:fx/type :v-box
-                      :children
-                      [
-                       {:fx/type text-input :label "Query params" :text stub :event-type ::stub}
-                       {:fx/type :h-box
-                        :padding 30
-                        :children
-                        [
-                         {:fx/type :v-box
-                          :children
-                          [
-                           {:fx/type search-button}
-                           {:fx/type text-input-slim :label "Ticket ID (press Enter to open): "
-                            :text direct-ticket-id :event-type ::set-direct-ticket-id}
-                           {:fx/type text-input-slim :label "Fast Filter (narrow list)"
-                            :text fast-filter :event-type ::set-fast-filter}
-                           {:fx/type ticket-button}
-                           {:fx/type ticket-button-all :tickets tickets-filtered}
-                           {:fx/type ticket-button-close-all :tickets tickets}
-                           {:fx/type browser-button}
-                           ]}
-                         {:fx/type ticket-list :tickets-filtered tickets-filtered}]}
-                       {:fx/type :label :text (str "Status: " (:status ticket))}
-                       {:fx/type text-input :label "Ticket Preview" :text (:description ticket)}]}
-                     ticket-tabs)}
+                    (render-ticket-tabs (main-tab m) ticket-tabs)}
                    ]}}})
 
 (defn renderer []
