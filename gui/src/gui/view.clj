@@ -147,7 +147,9 @@ ORDER BY priority, createdDate DESC"
     ::set-ticket-id (swap-and-no-set [:ticket] event)
     ::set-ticket (set-ticket-from-state @*state)
     ::stub (swap-and-no-set [:stub] event)
-    (prn "Unhandled event: " event)))
+    (prn "Unhandled event")
+    ;; (prn "Unhandled event: " event)
+    ))
 
 (defn text-input [{:keys [label text event-type]}]
   {:fx/type :v-box
