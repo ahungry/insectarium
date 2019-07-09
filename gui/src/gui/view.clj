@@ -230,6 +230,7 @@ ORDER BY priority, createdDate DESC"
       {:fx/type :label :padding 3 :text (str " at " date-created)}
       ]}
     {:fx/type :text-area
+     :wrap-text true
      :padding 10
      :style {
              ;; https://openjfx.io/javadoc/12/javafx.graphics/javafx/scene/doc-files/cssref.html
