@@ -3,6 +3,7 @@
    [clojure.spec.alpha :as s]
    [clojure.spec.gen.alpha :as gen]
    [clojure.spec.test.alpha :as stest]
+   [expound.alpha :as e]
    [gui.config :as config]
    [gui.dao-stub :as dp-stub]
    [gui.dao-github :as dp-github]
@@ -45,7 +46,7 @@
   (if (s/valid? sp m)
     m
     (do
-      (prn (str (s/explain sp m)))
+      (e/expound sp m)
       m)))
 
 (def assert-ticket (partial assert-spec ::ticket))
@@ -77,4 +78,5 @@
      set-provider!)))
 
 (defn set-provider-from-config! []
+  (config/set-conf!)
   (use-provider! (config/get-provider)))

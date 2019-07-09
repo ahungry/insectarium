@@ -10,7 +10,10 @@
                  [clj-http "3.10.0"]
                  [cheshire "5.8.1"]
                  [slingshot "0.12.2"]
+                 ;; readability things
                  [io.aviso/pretty "0.1.37"]
+                 [expound "0.7.2"]
+                 ;; end rt
                  [org.clojure/java.jdbc "0.7.9"]
                  [org.xerial/sqlite-jdbc "3.27.2.1"]]
   :main ^:skip-aot gui.core

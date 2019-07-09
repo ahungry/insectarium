@@ -10,7 +10,6 @@
 (defn main
   "Provider should be the implementation for fetching tickets."
   [& args]
-  (config/set-conf!)
   (dao/set-provider-from-config!)
   (view/main))
 
