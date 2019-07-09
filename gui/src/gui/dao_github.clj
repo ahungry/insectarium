@@ -56,6 +56,32 @@
       :body
       (cheshire/parse-string true)))
 
+(defn ticket-id->issue-slug
+  "Given some URL like https://github.com/owner/repo/issues/number will
+  convert into the appropriate slots."
+  [s]
+  (let [xs (clojure.string/split s #"/")]
+    (zipmap [:id :_ :repo :owner] (reverse xs))))
+
+(defn github-error->ticket [m]
+  {:key "ERROR!!!"
+   :fields {
+            :summary (str m)
+            :description (str m)}})
+
+(defn http-get-ticket [ticket-id]
+  (ss/try+
+   (let [{:keys [owner repo id]} (ticket-id->issue-slug ticket-id)
+         url (get-url (format "/repos/%s/%s/issues/%s" owner repo id))]
+     (-> (client/get
+          url
+          (maybe-basic-auth {:headers (get-headers)}))
+         :body
+         (cheshire/parse-string true)))
+   (catch [:status 404] {:keys [body]}
+     (prn body)
+     (github-error->ticket body))))
+
 (defn github->ticket [m]
   {:description (some-> m :body)
    :author (some-> m :user :login)
@@ -73,8 +99,10 @@
 
 (def get-tickets (memoize -get-tickets))
 
-(defn get-ticket []
-  (first (get-tickets)))
+(defn get-ticket [id]
+  (->
+   (http-get-ticket id)
+   github->ticket))
 
 (defn provider! [opts]
   (reset! *opts opts)
