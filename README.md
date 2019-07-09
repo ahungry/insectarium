@@ -106,7 +106,6 @@ lein run
 # TODO
 
 - Add simultaneous provider support, to use multiple providers at once.
-- Github - show comments under issues
 
 # License
 

@@ -69,6 +69,21 @@
             :summary (str m)
             :description (str m)}})
 
+;; GET /repos/:owner/:repo/issues/:issue_number/comments
+(defn http-get-ticket-comments [ticket-id]
+  (ss/try+
+   (let [{:keys [owner repo id]} (ticket-id->issue-slug ticket-id)
+         url (get-url (format "/repos/%s/%s/issues/%s/comments" owner repo id))]
+     (prn url)
+     (-> (client/get
+          url
+          (maybe-basic-auth {:headers (get-headers)}))
+         :body
+         (cheshire/parse-string true)))
+   (catch [:status 404] {:keys [body]}
+     (prn body)
+     (github-error->ticket body))))
+
 (defn http-get-ticket [ticket-id]
   (ss/try+
    (let [{:keys [owner repo id]} (ticket-id->issue-slug ticket-id)
@@ -99,10 +114,21 @@
 
 (def get-tickets (memoize -get-tickets))
 
+(defn github-comment->comment [m]
+  {:author (some-> m :user :login)
+   :email (some-> m :user :html_url)
+   :date-created (some-> m :updated_at)
+   :description (some-> m :body)})
+
+(defn get-ticket-comments [id]
+  (->> (http-get-ticket-comments id)
+       (map github-comment->comment)))
+
 (defn get-ticket [id]
   (->
    (http-get-ticket id)
-   github->ticket))
+   github->ticket
+   (conj {:comments (get-ticket-comments id)})))
 
 (defn provider! [opts]
   (reset! *opts opts)
