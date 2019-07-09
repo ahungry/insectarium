@@ -18,17 +18,20 @@
       (if (.exists (clojure.java.io/file xdg-rc))
         (read-string (slurp xdg-rc))))))
 
-(defn read-token-or-pass []
-  (prn "Please enter your API token for basic auth: ")
+(defn read-token-or-pass [username provider-name]
+  (prn
+   (format "Please enter your API token for user: %s under provider %s: "
+           username
+           provider-name))
   (clojure.string/trim (str (read))))
 
-(defn maybe-ask [s]
+(defn maybe-ask [s username provider-name]
   (if (= :ask s)
-    (read-token-or-pass)
+    (read-token-or-pass username provider-name)
     s))
 
-(defn get-auth-type-token [{:keys [username token-or-pass]}]
-  (let [use-token (maybe-ask token-or-pass)]
+(defn get-auth-type-token [{:keys [username token-or-pass provider-name]}]
+  (let [use-token (maybe-ask token-or-pass username provider-name)]
     {:method :basic
      :username username
      :token-or-pass use-token}))
@@ -45,7 +48,7 @@
 
 (defn get-auth-from-rc [{:keys [method] :as m} provider]
   (case method
-    :basic (get-auth-type-token m)
+    :basic (get-auth-type-token (conj m {:provider-name provider}))
     :cookie (get-auth-type-cookie m)
     (maybe-throw-for-method provider)))
 
