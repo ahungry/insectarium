@@ -77,6 +77,6 @@
        (dp-stub/provider! opts))
      set-provider!)))
 
-(defn set-provider-from-config! []
+(defn set-provider-from-config! [& [provider]]
   (config/set-conf!)
-  (use-provider! (config/get-provider)))
+  (use-provider! (or provider (config/get-provider))))
