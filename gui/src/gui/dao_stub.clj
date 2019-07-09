@@ -20,7 +20,7 @@
    :resolution "Won't Fix"
    :status "Done"
    :comments
-   (map get-comment (range 1 20))})
+   (map get-comment (range 1 2))})
 
 (defn get-tickets [_]
   [(get-ticket {:title "my first ticket" :description "Do the work" :id "XX-123"})

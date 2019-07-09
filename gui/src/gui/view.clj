@@ -156,6 +156,7 @@ ORDER BY priority, createdDate DESC"
    :children
    [{:fx/type :label :text label}
     {:fx/type :text-area
+     :wrap-text true
      :style {:-fx-font-family "monospace"}
      :text text
      :on-text-changed {:event/type event-type}}]})

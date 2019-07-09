@@ -87,7 +87,7 @@
    :author (some-> m :user :login)
    :email (some-> m :user :html_url)
    :date-created (some-> m :updated_at)
-   :resolution nil
+   :resolution ""
    :status (some-> m :state)
    :title (some-> m :title)
    :id (some-> m :html_url)
