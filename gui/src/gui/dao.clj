@@ -3,7 +3,11 @@
    [clojure.spec.alpha :as s]
    [clojure.spec.gen.alpha :as gen]
    [clojure.spec.test.alpha :as stest]
-   [gui.dao-stub :as dp-stub]))
+   [gui.config :as config]
+   [gui.dao-stub :as dp-stub]
+   [gui.dao-github :as dp-github]
+   [gui.dao-jira :as dp-jira]
+   ))
 
 ;; Define the specs
 (s/def ::author string?)
@@ -54,3 +58,23 @@
   (assert-tickets ((:get-tickets @*provider) _)))
 
 ;; (stest/instrument)
+(defn get-provider! [s opts]
+  (case s
+    :jira (dp-jira/provider! opts)
+    :github (dp-github/provider! opts)
+    :stub (dp-stub/provider! opts)
+    (dp-stub/provider! opts)))
+
+(defn use-provider! [x]
+  (let [opts {:domain (config/get-domain)
+              :auth (config/get-auth)}]
+    (->
+     (case x
+       :jira (dp-jira/provider! opts)
+       :github (dp-github/provider! opts)
+       :stub (dp-stub/provider! opts)
+       (dp-stub/provider! opts))
+     set-provider!)))
+
+(defn set-provider-from-config! []
+  (use-provider! (config/get-provider)))
