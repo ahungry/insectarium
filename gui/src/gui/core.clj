@@ -11,6 +11,7 @@
   "Provider should be the implementation for fetching tickets."
   [& [_provider]]
   (dao/set-providers!)
+  (Thread/sleep 100)
   (view/main))
 
 (defn -main [& args]
