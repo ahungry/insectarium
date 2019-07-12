@@ -368,6 +368,8 @@ ORDER BY priority, createdDate DESC"
 
 (defn main [& args]
   (state-defaults!)
-  (set-tickets-from-state *state)
+  (future
+    (set-tickets (dao/get-tickets (:stub @*state)))
+    (renderer))
   (swap-and-set-fast-filter "")
   (fx/mount-renderer *state (renderer)))

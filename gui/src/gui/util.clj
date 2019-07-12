@@ -2,7 +2,7 @@
 (ns gui.util)
 
 (defn split-by-space [s]
-  (clojure.string/split s #" "))
+  (clojure.string/split (or s "") #" "))
 
 (defn make-regex [s]
   (re-pattern (str "(?i)" s)))
