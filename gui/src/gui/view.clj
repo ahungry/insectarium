@@ -10,13 +10,18 @@
    [javafx.scene.paint Color]
    [javafx.scene.canvas Canvas]))
 
+(defn maybe-get-first-provider []
+  (if (> (count (config/get-providers)) 0)
+    (-> (config/get-providers) first str (subs 1))
+    "stub"))
+
 ;; TODO: Set initial stub value from the provider
 (def state-defaults
   {:stub "assignee = currentUser()
 AND resolution IS EMPTY
 ORDER BY priority, createdDate DESC"
    :direct-ticket-id nil
-   :direct-ticket-provider (-> (config/get-providers) first str (subs 1))
+   :direct-ticket-provider (maybe-get-first-provider)
    :fast-filter ""
    :active-tab "Main"
    :ticket-tabs []
