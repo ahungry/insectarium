@@ -130,12 +130,3 @@
    (http-get-ticket id)
    github->ticket
    (conj {:comments (get-ticket-comments id)})))
-
-(defn provider! [opts]
-  (config->opts!)
-  ;; (reset! *opts opts)
-  ;; {:get-auth-token get-auth-token
-  ;;  :get-browser-url get-browser-url
-  ;;  :get-ticket get-ticket
-  ;;  :get-tickets get-tickets}
-  )

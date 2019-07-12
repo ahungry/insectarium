@@ -118,12 +118,3 @@
        jira->ticket))
 
 (def get-ticket (memoize -get-ticket))
-
-(defn provider! [opts]
-  (config->opts!)
-  ;; (reset! *opts opts)
-  ;; {:get-auth-token get-auth-token
-  ;;  :get-browser-url get-browser-url
-  ;;  :get-ticket get-ticket
-  ;;  :get-tickets get-tickets}
-  )

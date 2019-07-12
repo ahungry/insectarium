@@ -9,8 +9,8 @@
 
 (defn main
   "Provider should be the implementation for fetching tickets."
-  [& [provider]]
-  (dao/set-provider-from-config! provider)
+  [& [_provider]]
+  (dao/set-providers!)
   (view/main))
 
 (defn -main [& args]

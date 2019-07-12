@@ -76,4 +76,4 @@
 
 (defn set-providers! []
   (config/set-conf!)
-  (map set-provider! (config/get-providers)))
+  (doall (map set-provider! (config/get-providers))))
