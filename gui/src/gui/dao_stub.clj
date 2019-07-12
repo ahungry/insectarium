@@ -2,6 +2,8 @@
 
 (def *opts (atom {}))
 
+(defn config->opts! [] nil)
+
 (defn get-browser-url [_] "http://example.com")
 
 (defn get-comment [& r]
@@ -27,9 +29,3 @@
   [(get-ticket {:title "my first ticket" :description "Do the work" :id "XX-123"})
    (get-ticket {:title "my second ticket" :description "Do the work faster" :id "XX-124"})
    (get-ticket {:title "project overdue" :description "Oh noes" :id "URG-124"})])
-
-(defn provider! [opts]
-  (reset! *opts opts)
-  {:get-ticket get-ticket
-   :get-browser-url get-browser-url
-   :get-tickets get-tickets})

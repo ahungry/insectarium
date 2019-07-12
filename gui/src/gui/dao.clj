@@ -40,11 +40,6 @@
 
 (s/def ::tickets (s/coll-of ::ticket :into []))
 
-(def *provider (atom (dp-stub/provider! {})))
-
-(defn set-provider! [x]
-  (reset! *provider x))
-
 (defn get-browser-url [provider query]
   (let [f (ns-resolve (kw->ns provider) 'get-browser-url)]
     (f query)))
@@ -75,26 +70,10 @@
           (map (partial get-tickets-for-provider query)
                (config/get-providers))))
 
-;; (stest/instrument)
-(defn get-provider! [s opts]
-  (case s
-    :jira (dp-jira/provider! opts)
-    :github (dp-github/provider! opts)
-    :stub (dp-stub/provider! opts)
-    (dp-stub/provider! opts)))
+(defn set-provider! [provider]
+  (let [f (ns-resolve (kw->ns provider) 'config->opts!)]
+    (f)))
 
-(defn use-provider! [x]
-  (let [opts {:domain (config/get-domain)
-              :auth (config/get-auth)}]
-    (->
-     (case x
-       :jira (dp-jira/provider! opts)
-       :github (dp-github/provider! opts)
-       :stub (dp-stub/provider! opts)
-       (dp-stub/provider! opts))
-     set-provider!)))
-
-(defn set-provider-from-config! [& [provider]]
+(defn set-providers! []
   (config/set-conf!)
-  ;; (use-provider! (or provider (config/get-provider)))
-  )
+  (map set-provider! (config/get-providers)))
