@@ -45,8 +45,9 @@
 (defn set-provider! [x]
   (reset! *provider x))
 
-(defn get-browser-url [_]
-  ((:get-browser-url @*provider) _))
+(defn get-browser-url [provider query]
+  (let [f (ns-resolve (kw->ns provider) 'get-browser-url)]
+    (f query)))
 
 (defn assert-spec
   "Weakly assert a spec (as in, we just print some debug that it failed)."

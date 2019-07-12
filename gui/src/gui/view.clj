@@ -15,6 +15,7 @@
 AND resolution IS EMPTY
 ORDER BY priority, createdDate DESC"
    :direct-ticket-id nil
+   :direct-ticket-provider "stub"
    :fast-filter ""
    :active-tab "Main"
    :ticket-tabs []
@@ -69,28 +70,29 @@ ORDER BY priority, createdDate DESC"
 (defn add-ticket-tab-all
   "Try to open a new tab for every ticket in the user list of items."
   []
-  (let [ticket-ids (map :id (:tickets-filtered @*state))]
-    (doall (map add-ticket-tab-by-id ticket-ids))))
+  (doall (map (fn [{:keys [id provider]}] (add-ticket-tab-by-id id provider))
+              (:tickets-filtered @*state))))
 
-(defn add-browser-tab-by-id [ticket-id]
+(defn add-browser-tab-by-id [ticket-id provider]
   (when ticket-id
-    (clojure.java.shell/sh "firefox" (dao/get-browser-url ticket-id))))
+    (clojure.java.shell/sh "firefox" (dao/get-browser-url provider ticket-id))))
 
 (defn add-browser-tab [{:keys [ticket]}]
-  (let [ticket-id (:id ticket)]
-    (add-browser-tab-by-id ticket-id)))
+  (let [ticket-id (:id ticket)
+        provider (:provider ticket)]
+    (add-browser-tab-by-id ticket-id provider)))
 
 (defn get-ticket-tabs [] (-> @*state :ticket-tabs))
 
 (defn remove-tab-by-id [ticket-id]
-  (swap! *state update-in [:ticket-tabs] (fn [xs] (filter #(not (= ticket-id %)) xs))))
+  (swap! *state update-in [:ticket-tabs] (fn [xs] (filter #(not (= ticket-id (:id %))) xs))))
 
 (defn remove-tab [event]
   (let [ticket-id (-> (:fx/event event) .getSource .getText)]
     (remove-tab-by-id ticket-id)))
 
 (defn close-ticket-tab-all []
-  (let [ticket-ids (get-ticket-tabs)]
+  (let [ticket-ids (map :id (get-ticket-tabs))]
     (doall (map remove-tab-by-id ticket-ids))))
 
 (defn close-tab-key? [^KeyEvent key-event]
@@ -112,7 +114,9 @@ ORDER BY priority, createdDate DESC"
 (defn key-handler-text-input-slim [event]
   (let [^KeyEvent key-event (:fx/event event)]
     (when (enter-key? key-event)
-      (add-ticket-tab-by-id (:direct-ticket-id @*state)))))
+      (add-ticket-tab-by-id
+       (:direct-ticket-id @*state)
+       (keyword (:direct-ticket-provider @*state))))))
 
 (defn set-active-tab [event]
   (prn event)
@@ -125,7 +129,7 @@ ORDER BY priority, createdDate DESC"
 (defn get-fast-filtered-tickets [tickets]
   (filter
    #(util/all-matching? (get-fast-filter)
-                        (str (:id %) (:title %)))
+                        (str (:provider %) (:id %) (:title %)))
    tickets))
 
 (defn swap-and-set-fast-filter [event]
@@ -136,6 +140,7 @@ ORDER BY priority, createdDate DESC"
 (defn event-handler [event]
   (case (:event/type event)
     ::set-direct-ticket-id (swap-and-no-set [:direct-ticket-id] event)
+    ::set-direct-ticket-provider (swap-and-no-set [:direct-ticket-provider] event)
     ::text-input-slim-key (key-handler-text-input-slim event)
     ::set-fast-filter (swap-and-set-fast-filter event)
     ::selected-tab (set-active-tab event)
@@ -206,8 +211,8 @@ ORDER BY priority, createdDate DESC"
    :min-width 500
    :on-selected-item-changed {:event/type ::set-ticket-id}
    :cell-factory
-   (fn [{:keys [id title]}]
-     {:text (format "%s %s" id title)})
+   (fn [{:keys [provider id title]}]
+     {:text (format "%s %s %s" provider id title)})
    :items tickets-filtered})
 
 (defn text-input-slim [{:keys [label text event-type]}]
@@ -219,7 +224,7 @@ ORDER BY priority, createdDate DESC"
      :on-key-pressed {:event/type ::text-input-slim-key}
      :text text}]})
 
-(defn render-comment [{:keys [author email description date-created] :as m}]
+(defn render-comment [{:keys [author email description date-created] :as _m}]
   {:fx/type :v-box
    :padding 3
    :children
@@ -277,7 +282,7 @@ ORDER BY priority, createdDate DESC"
   the preview pane)."
   [{:keys [id provider]}]
   (let [ticket (get-ticket-from-state id provider)]
-    {:fx/type :tab :text (str id " // " provider)
+    {:fx/type :tab :text (format "%s %s" provider id)
      :on-closed {:event/type ::remove-tab}
      :on-selection-changed {:event/type ::selected-tab
                             :provider provider
@@ -300,7 +305,7 @@ ORDER BY priority, createdDate DESC"
 
 (defn main-tab
   "The Main tab area (as opposed to the tabbed ticket view)."
-  [{:keys [direct-ticket-id fast-filter stub tickets-filtered tickets ticket]}]
+  [{:keys [direct-ticket-id direct-ticket-provider fast-filter stub tickets-filtered tickets ticket]}]
   {:fx/type :v-box
    :children
    [
@@ -315,6 +320,8 @@ ORDER BY priority, createdDate DESC"
         {:fx/type search-button}
         {:fx/type text-input-slim :label "Ticket ID (press Enter to open): "
          :text direct-ticket-id :event-type ::set-direct-ticket-id}
+        {:fx/type text-input-slim :label "Provider (press Enter to open): "
+         :text direct-ticket-provider :event-type ::set-direct-ticket-provider}
         {:fx/type text-input-slim :label "Fast Filter (narrow list)"
          :text fast-filter :event-type ::set-fast-filter}
         {:fx/type ticket-button}
