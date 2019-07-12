@@ -6,7 +6,7 @@
 ;; If you choose to use a provider, you should declare your values (domain etc.)
 ;; and how you choose to handle authentication, so that we can properly load it up.
 {
- :provider :jira
+ :providers [:stub :github :jira]
 
  :stub {}
 

@@ -13,8 +13,8 @@
   "Pull in the active config settings and put them in the provider opts."
   []
   (reset! *opts
-          {:domain (config/get-domain)
-           :auth (config/get-auth)}))
+          {:domain (config/get-domain :github)
+           :auth (config/get-auth :github)}))
 
 (defn set-domain [s] (swap! *opts assoc-in [:domain] s))
 (defn get-domain [] (:domain @*opts))
@@ -98,7 +98,8 @@
      (github-error->ticket body))))
 
 (defn github->ticket [m]
-  {:description (some-> m :body)
+  {:provider :github
+   :description (some-> m :body)
    :author (some-> m :user :login)
    :email (some-> m :user :html_url)
    :date-created (some-> m :updated_at)

@@ -52,19 +52,25 @@
     :cookie (get-auth-type-cookie m)
     (maybe-throw-for-method provider)))
 
-(defn get-rc-file []
-  (let [rc (get-rc-file-raw)
-        provider-name (:provider rc)
-        provider (provider-name rc)
+(defn make-provider
+  "Do the setup work to create a provider (ask for user passwords etc.)."
+  [rc provider-name]
+  (let [provider (provider-name rc)
         domain (:domain provider)
         auth (:auth provider)]
     {:auth (get-auth-from-rc auth provider-name)
      :domain domain
      :provider provider-name}))
 
+(defn get-rc-file []
+  (let [rc (get-rc-file-raw)
+        providers (:providers rc)]
+    (zipmap providers (map (partial make-provider rc) providers))))
+
 (defn set-conf! []
   (reset! *conf (get-rc-file)))
 
-(defn get-domain [] (:domain @*conf))
-(defn get-provider [] (:provider @*conf))
-(defn get-auth [] (:auth @*conf))
+(defn get-domain [k] (:domain (k @*conf)))
+(defn get-provider [k] (:provider (k @*conf)))
+(defn get-auth [k] (:auth (k @*conf)))
+(defn get-providers [] (keys @*conf))

@@ -10,7 +10,14 @@
    [gui.dao-jira :as dp-jira]
    ))
 
+(defn kw->ns [k]
+  (case k
+    :jira 'gui.dao-jira
+    :github 'gui.dao-github
+    :stub 'gui.dao-stub))
+
 ;; Define the specs
+(s/def ::provider keyword?)
 (s/def ::author string?)
 (s/def ::date-created string?)
 (s/def ::description string?)
@@ -21,7 +28,8 @@
 (s/def ::title string?)
 
 (s/def ::ticket
-  (s/keys :req-un [::author
+  (s/keys :req-un [::provider
+                   ::author
                    ::date-created
                    ::description
                    ::email
@@ -52,11 +60,19 @@
 (def assert-ticket (partial assert-spec ::ticket))
 (def assert-tickets (partial assert-spec ::tickets))
 
-(defn get-ticket [_]
-  (assert-ticket ((:get-ticket @*provider) _)))
+(defn get-ticket [provider query]
+  (let [f (ns-resolve (kw->ns provider) 'get-ticket)]
+    (assert-ticket (f query))))
 
-(defn get-tickets [_]
-  (assert-tickets ((:get-tickets @*provider) _)))
+(defn get-tickets-for-provider [query provider]
+  (let [f (ns-resolve (kw->ns provider) 'get-tickets)]
+    (assert-tickets (f query))))
+
+;; TODO: Run these in parallel
+(defn get-tickets [query]
+  (reduce concat
+          (map (partial get-tickets-for-provider query)
+               (config/get-providers))))
 
 ;; (stest/instrument)
 (defn get-provider! [s opts]
@@ -79,4 +95,5 @@
 
 (defn set-provider-from-config! [& [provider]]
   (config/set-conf!)
-  (use-provider! (or provider (config/get-provider))))
+  ;; (use-provider! (or provider (config/get-provider)))
+  )

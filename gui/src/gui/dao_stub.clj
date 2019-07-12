@@ -11,7 +11,8 @@
    :description "blabla some fake comment"})
 
 (defn get-ticket [{:keys [title id description] :as m}]
-  {:title (or title "Some title here")
+  {:provider :stub
+   :title (or title "Some title here")
    :description (or description "some description here")
    :id (or id (str m))
    :author "Matthew Carter"

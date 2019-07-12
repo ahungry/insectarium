@@ -52,17 +52,19 @@ ORDER BY priority, createdDate DESC"
    set-tickets-from-state
    set-ticket-from-state))
 
-(defn add-ticket-tab-by-id [ticket-id]
+(defn add-ticket-tab-by-id [ticket-id provider]
   (when ticket-id
-    (swap! *state update-in [:ticket-tabs] conj ticket-id)))
+    (swap! *state update-in [:ticket-tabs] conj {:id ticket-id
+                                                 :provider provider})))
 
 (defn add-ticket-tab
   "We do not have a good way to communicate from the generic View button
   to find the active list item, so we can instead rely on the last state setting
   for the current selected ticket in the list view."
   [{:keys [ticket]}]
-  (let [ticket-id (:id ticket)]
-    (add-ticket-tab-by-id ticket-id)))
+  (let [ticket-id (:id ticket)
+        ticket-provider (:provider ticket)]
+    (add-ticket-tab-by-id ticket-id ticket-provider)))
 
 (defn add-ticket-tab-all
   "Try to open a new tab for every ticket in the user list of items."
@@ -258,14 +260,14 @@ ORDER BY priority, createdDate DESC"
     {:fx/type :v-box :children (map render-comment comments)}}
    ])
 
-(defn get-ticket-from-state [ticket-id]
+(defn get-ticket-from-state [ticket-id provider]
   (let [ticket-key (keyword ticket-id)
         ticket (ticket-key @*state)]
     (if ticket
       ticket
       (do
         (future
-          (swap! *state assoc-in [ticket-key] (dao/get-ticket ticket-id)))
+          (swap! *state assoc-in [ticket-key] (dao/get-ticket provider ticket-id)))
         {:comments []}))))
 
 (defn render-ticket-tab
@@ -273,12 +275,13 @@ ORDER BY priority, createdDate DESC"
   get-ticket call should be memoized, and it should have already
   kicked off when the user chose it in the list view (to pop it up in
   the preview pane)."
-  [ticket-id]
-  (let [ticket (get-ticket-from-state ticket-id)]
-    {:fx/type :tab :text (str ticket-id)
+  [{:keys [id provider]}]
+  (let [ticket (get-ticket-from-state id provider)]
+    {:fx/type :tab :text (str id " // " provider)
      :on-closed {:event/type ::remove-tab}
      :on-selection-changed {:event/type ::selected-tab
-                            :id ticket-id}
+                            :provider provider
+                            :id id}
      :content
      {:fx/type :v-box
       :children

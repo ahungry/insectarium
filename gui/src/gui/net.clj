@@ -3,14 +3,6 @@
    [clj-http.client :as client]
    [cheshire.core :as cheshire]))
 
-(defn xas-json
-  "Wrapper around client call to ensure consistent parsing."
-  [f]
-  (fn [& r]
-    (-> (apply f r)
-        :body
-        (cheshire/parse-string true))))
-
 (defn as-json [f]
   (fn [url opts]
     (->

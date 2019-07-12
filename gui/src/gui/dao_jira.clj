@@ -13,8 +13,8 @@
   "Pull in the active config settings and put them in the provider opts."
   []
   (reset! *opts
-          {:domain (config/get-domain)
-           :auth (config/get-auth)}))
+          {:domain (config/get-domain :jira)
+           :auth (config/get-auth :jira)}))
 
 (defn set-domain [s] (swap! *opts assoc-in [:domain] s))
 (defn get-domain [] (:domain @*opts))
@@ -89,7 +89,8 @@
    :description (some-> m :body)})
 
 (defn jira->ticket [m]
-  {:description (some-> m :fields :description)
+  {:provider :jira
+   :description (some-> m :fields :description)
    :author (some-> m :fields :creator :displayName)
    :email (some-> m :fields :creator :emailAddress)
    :date-created (some-> m :fields :created)
