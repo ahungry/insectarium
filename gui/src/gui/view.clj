@@ -3,6 +3,7 @@
    [clojure.java.shell]
    [cljfx.api :as fx]
    [gui.dao :as dao]
+   [gui.config :as config]
    [gui.util :as util])
   (:import
    [javafx.scene.input KeyCode KeyEvent]
@@ -15,7 +16,7 @@
 AND resolution IS EMPTY
 ORDER BY priority, createdDate DESC"
    :direct-ticket-id nil
-   :direct-ticket-provider "stub"
+   :direct-ticket-provider (-> (config/get-providers) first str (subs 1))
    :fast-filter ""
    :active-tab "Main"
    :ticket-tabs []
@@ -128,8 +129,9 @@ ORDER BY priority, createdDate DESC"
 
 (defn get-fast-filtered-tickets [tickets]
   (filter
-   #(util/all-matching? (get-fast-filter)
-                        (str (:provider %) (:id %) (:title %)))
+   #(util/all-matching?
+     (get-fast-filter)
+     (str (:description %) (:provider %) (:id %) (:title %)))
    tickets))
 
 (defn swap-and-set-fast-filter [event]
@@ -208,11 +210,11 @@ ORDER BY priority, createdDate DESC"
 (defn ticket-list [{:keys [tickets-filtered]}]
   {:fx/type :list-view
    :max-height 150
-   :min-width 500
+   :min-width 800
    :on-selected-item-changed {:event/type ::set-ticket-id}
    :cell-factory
-   (fn [{:keys [provider id title]}]
-     {:text (format "%s %s %s" provider id title)})
+   (fn [{:keys [status provider id title]}]
+     {:text (format "[%s] %s (%s) {%s}" status title id provider)})
    :items tickets-filtered})
 
 (defn text-input-slim [{:keys [label text event-type]}]
