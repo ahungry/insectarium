@@ -181,8 +181,6 @@ ORDER BY priority, createdDate DESC"
   {:fx/type :button
    :text text
    :padding padding
-   ;; :style {:-fx-background-color "slategray"
-   ;;         :-fx-text-fill "#ffffff"}
    :on-action {:event/type event-type}})
 
 (defn button [{:keys [text event-type]}]
@@ -214,8 +212,8 @@ ORDER BY priority, createdDate DESC"
 
 (defn ticket-list [{:keys [tickets-filtered]}]
   {:fx/type :list-view
-   :max-height 150
-   :min-width 800
+   ;; :max-height 150
+   :min-width 1000
    :on-selected-item-changed {:event/type ::set-ticket-id}
    :cell-factory
    (fn [{:keys [status provider id title]}]
@@ -248,13 +246,6 @@ ORDER BY priority, createdDate DESC"
     {:fx/type :text-area
      :wrap-text true
      :padding 10
-     :style {
-             ;; https://openjfx.io/javadoc/12/javafx.graphics/javafx/scene/doc-files/cssref.html
-             :-fx-font-family "sans-serif"
-             :-fx-font-size "12px"
-             :-fx-text-fill "#333333"
-             :-fx-background-color "#eeeeee"
-             }
      :text (str description)}]})
 
 (defn get-ticket-tab-children [{:keys [id description comments title]}]
@@ -304,8 +295,7 @@ ORDER BY priority, createdDate DESC"
   (->>
    (concat
     [{:fx/type :tab :text "Main" :closable false
-      :style {:-fx-background-color "#ffffff"
-              :-fx-font "16px monospace"}
+      ;; :style {:-fx-font "16px monospace"}
       :content main-children-map}]
     (map render-ticket-tab ticket-tabs))
    (into [])))
@@ -351,10 +341,10 @@ ORDER BY priority, createdDate DESC"
            :stylesheets #{"styles.css"}
            :root {:fx/type :v-box
                   ;; :alignment :top
-                  :style {
-                          ;; :-fx-font-family "monospace"
-                          :-fx-background-color "beige"
-                          }
+                  ;; :style {
+                  ;;         ;; :-fx-font-family "monospace"
+                  ;;         :-fx-background-color "#000"
+                  ;;         }
                   :on-key-pressed {:event/type ::press}
                   :children
                   [

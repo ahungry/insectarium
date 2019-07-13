@@ -1,25 +1,90 @@
 VBox {
-    -fx-background-color: #666a;
+  -fx-background-color: #333;
 }
 Label {
-    -fx-text-fill: white;
+  -fx-text-fill: white;
+}
+.list-view, ListView {
+  -fx-padding: 2;
 }
 .text-input {
-    -fx-text-fill: white;
-    -fx-background-color: #666;
-    -fx-background-radius: 4 4 0 0;
-    -fx-border-color: #333;
-    -fx-border-width: 0 0 4 0;
+  -fx-text-fill: white;
+  -fx-background-color: #666;
+  -fx-background-radius: 4 4 0 0;
+  -fx-border-color: #333;
+  -fx-border-width: 0 0 4 0;
 }
 .text-input:focused {
-    -fx-border-color: #f9a527;
+  -fx-border-color: #f9a527;
+}
+
+.text-area {
+  -fx-text-fill: #666;
+  -fx-background-color: #666;
+  -fx-background-radius: 4 4 0 0;
+  -fx-border-color: #333;
+  -fx-border-width: 0 0 4 0;
+  -fx-font-family: sans-serif;
+  -fx-font-size: 12px;
+}
+.text-area:focused {
+  -fx-border-color: #f9a527;
 }
 
 * {
-    -fx-font-family: monospace;
-    -fx-padding: 6;
+  -fx-font-family: monospace;
+  -fx-padding: 2;
 }
 .root {
-    -fx-padding: 10;
-    -fx-background-radius: 10;
+  -fx-background-color: #000;
+  -fx-padding: 2;
+  -fx-background-radius: 10;
+}
+.tab:focused, Tab:focused, Button:hover, Button:focused {
+  -fx-background-color: linear-gradient(to bottom, #aaff00, #333),
+                        linear-gradient(from 0px 0px to 0px 50px, #aaff00, #333);
+}
+
+.tab, Tab {
+  -fx-background-color: linear-gradient(to bottom, #999, #333),
+                        linear-gradient(from 0px 0px to 50px 40px, #999, #333);
+  -fx-font: 10px monospace;
+  -fx-text-fill: white;
+  -fx-text-inner-color: white;
+  -fx-prompt-text-fill: white;
+  -fx-padding: 2;
+}
+Button, Button {
+  -fx-background-color: linear-gradient(to bottom, #999, #333),
+                        linear-gradient(from 0px 0px to 50px 40px, #999, #333);
+  -fx-font: 16px monospace;
+  -fx-text-fill: white;
+  -fx-text-inner-color: white;
+  -fx-prompt-text-fill: white;
+  -fx-padding: 20;
+}
+
+.text-input {
+  -fx-text-fill: -fx-text-inner-color;
+  -fx-highlight-fill: derive(-fx-control-inner-background,-20%);
+  -fx-highlight-text-fill: -fx-text-inner-color;
+  -fx-prompt-text-fill: derive(-fx-control-inner-background,-30%);
+  -fx-background-color: linear-gradient(to bottom, derive(-fx-text-box-border, -10%), -fx-text-box-border),
+                        linear-gradient(from 0px 0px to 0px 5px, derive(-fx-control-inner-background, -9%), -fx-control-inner-background);
+  -fx-background-insets: 0, 1;
+  -fx-background-radius: 3, 2;
+  -fx-cursor: text;
+  -fx-padding: 0.333333em 0.583em 0.333333em 0.583em; /* 4 7 4 7 */
+}
+.text-input:focused {
+  -fx-highlight-fill: -fx-accent;
+  -fx-highlight-text-fill: white;
+  -fx-background-color:
+    -fx-focus-color,
+    -fx-control-inner-background,
+    -fx-faint-focus-color,
+    linear-gradient(from 0px 0px to 0px 5px, derive(-fx-control-inner-background, -9%), -fx-control-inner-background);
+  -fx-background-insets: -0.2, 1, -1.4, 3;
+  -fx-background-radius: 3, 2, 4, 0;
+  -fx-prompt-text-fill: transparent;
 }
