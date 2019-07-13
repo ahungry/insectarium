@@ -41,8 +41,9 @@ Label {
   -fx-background-radius: 10;
 }
 .tab:focused, Tab:focused, Button:hover, Button:focused {
-  -fx-background-color: linear-gradient(to bottom, #aaff00, #333),
-                        linear-gradient(from 0px 0px to 0px 50px, #aaff00, #333);
+  /* -fx-background-color: linear-gradient(to bottom, #aaff00, #333), */
+  /*                       linear-gradient(from 0px 0px to 0px 50px, #aaff00, #333); */
+  -fx-background-color: #006633;
 }
 
 .tab, Tab {
@@ -55,8 +56,9 @@ Label {
   -fx-padding: 2;
 }
 Button, Button {
-  -fx-background-color: linear-gradient(to bottom, #555, #333),
-                        linear-gradient(from 0px 0px to 50px 500px, #555, #333);
+  /* -fx-background-color: linear-gradient(to bottom, #555, #333), */
+  /*                       linear-gradient(from 0px 0px to 50px 500px, #555, #333); */
+  -fx-background-color: #555;
   -fx-font: 16px monospace;
   -fx-text-fill: white;
   -fx-text-inner-color: white;
