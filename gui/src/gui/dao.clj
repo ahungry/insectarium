@@ -62,7 +62,9 @@
 
 (defn get-tickets-for-provider [query provider]
   (let [f (ns-resolve (kw->ns provider) 'get-tickets)]
-    (assert-tickets (f query))))
+    ;; (assert-tickets (f query))
+    (f query)
+    ))
 
 ;; TODO: Run these in parallel
 (defn get-tickets [query]

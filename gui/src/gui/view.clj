@@ -347,6 +347,8 @@ ORDER BY priority, createdDate DESC"
    :width 1200
    :height 900
    :scene {:fx/type :scene
+           :fill :transparent
+           :stylesheets #{"styles.css"}
            :root {:fx/type :v-box
                   ;; :alignment :top
                   :style {

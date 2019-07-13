@@ -94,7 +94,7 @@
    :author (some-> m :fields :creator :displayName)
    :email (some-> m :fields :creator :emailAddress)
    :date-created (some-> m :fields :created)
-   :resolution (some-> m :fields :resolution)
+   :resolution (str (some-> m :fields :resolution))
    :status (some-> m :fields :status :name)
    :title (some-> m :fields :summary)
    :id (some-> m :key)
