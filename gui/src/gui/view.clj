@@ -179,6 +179,7 @@ ORDER BY priority, createdDate DESC"
 
 (defn base-button [{:keys [text event-type padding]}]
   {:fx/type :button
+   :min-width 500
    :text text
    :padding padding
    :on-action {:event/type event-type}})
@@ -213,6 +214,7 @@ ORDER BY priority, createdDate DESC"
 (defn ticket-list [{:keys [tickets-filtered]}]
   {:fx/type :list-view
    ;; :max-height 150
+   :min-height 400
    :min-width 1000
    :on-selected-item-changed {:event/type ::set-ticket-id}
    :cell-factory
@@ -334,8 +336,8 @@ ORDER BY priority, createdDate DESC"
   {:fx/type :stage
    :showing true
    :title "insectarium"
-   :width 1200
-   :height 900
+   :width 1920
+   :height 1080
    :scene {:fx/type :scene
            :fill :transparent
            :stylesheets #{"styles.css"}
