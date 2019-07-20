@@ -105,7 +105,7 @@ lein run
 
 # TODO
 
-- Add simultaneous provider support, to use multiple providers at once.
+- Add a docker based setup
 
 # License
 
