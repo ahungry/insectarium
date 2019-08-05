@@ -73,7 +73,7 @@
      (maybe-basic-auth
       {:headers (get-headers)
        :body (cheshire/generate-string
-              {:maxResults 20
+              {:maxResults 100
                :jql jql})})
      )
     :issues)

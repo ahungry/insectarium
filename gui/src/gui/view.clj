@@ -88,6 +88,12 @@ ORDER BY priority, createdDate DESC"
         provider (:provider ticket)]
     (add-browser-tab-by-id ticket-id provider)))
 
+(defn add-ticket-browser-all
+  "Try to open a new browser tab for every ticket in the user list of items."
+  []
+  (doall (map (fn [{:keys [id provider]}] (add-browser-tab-by-id id provider))
+              (:tickets-filtered @*state))))
+
 (defn get-ticket-tabs [] (-> @*state :ticket-tabs))
 
 (defn remove-tab-by-id [ticket-id]
@@ -157,6 +163,7 @@ ORDER BY priority, createdDate DESC"
     ::close-ticket-all (close-ticket-tab-all)
     ::open-ticket-all (add-ticket-tab-all)
     ::open-browser (add-browser-tab @*state)
+    ::open-browser-all (add-ticket-browser-all)
     ::search (set-tickets-from-state @*state)
     ::set-ticket-id (swap-and-no-set [:ticket] event)
     ::set-ticket (set-ticket-from-state @*state)
@@ -204,6 +211,10 @@ ORDER BY priority, createdDate DESC"
 
 (defn ticket-button [{:keys [text]} ]
   (button {:text (str "Open in Tab " text) :event-type ::open-ticket}))
+
+(defn browser-button-all [{:keys [text tickets]} ]
+  (button {:text (str "Open all " (count tickets) " tickets in browser " text)
+           :event-type ::open-browser-all}))
 
 (defn browser-button [{:keys [text]} ]
   (button {:text (str "Open in Browser " text) :event-type ::open-browser}))
@@ -327,6 +338,7 @@ ORDER BY priority, createdDate DESC"
         {:fx/type ticket-button-all :tickets tickets-filtered}
         {:fx/type ticket-button-close-all :tickets tickets}
         {:fx/type browser-button}
+        {:fx/type browser-button-all :tickets tickets-filtered}
         ]}
       {:fx/type ticket-list :tickets-filtered tickets-filtered}]}
     {:fx/type :label :text (str "Status: " (:status ticket))}
