@@ -14,3 +14,8 @@
         matched (filter #(re-find % haystack) re-words)]
     (= (count matched)
        (count re-words))))
+
+(defn beginning-of-string [n s]
+  "Get the N chars of the beginning of a string S, but no more than S."
+  (let [slen (count s)]
+    (subs s 0 (min n slen))))

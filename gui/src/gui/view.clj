@@ -230,7 +230,7 @@ ORDER BY priority, createdDate DESC"
    :on-selected-item-changed {:event/type ::set-ticket-id}
    :cell-factory
    (fn [{:keys [status provider id title]}]
-     {:text (format "[%s] %s (%s) {%s}" status title id provider)})
+     {:text (format "[%s] (%s) %s {%s}" status (util/beginning-of-string 12 id) title provider)})
    :items tickets-filtered})
 
 (defn text-input-slim [{:keys [label text event-type]}]
