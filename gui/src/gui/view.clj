@@ -180,7 +180,7 @@ ORDER BY priority, createdDate DESC"
    [{:fx/type :label :text label}
     {:fx/type :text-area
      :wrap-text true
-     :style {:-fx-font-family "monospace"}
+     ;; :style {:-fx-font-family "monospace"}
      :text text
      :on-text-changed {:event/type event-type}}]})
 
@@ -249,7 +249,7 @@ ORDER BY priority, createdDate DESC"
    [
     {:fx/type :h-box
      :padding 5
-     :style {:-fx-font-family "monospace"}
+     ;; :style {:-fx-font-family "monospace"}
      :children
      [
       {:fx/type :label :padding 3 :text (str "by: " author)}
@@ -352,7 +352,8 @@ ORDER BY priority, createdDate DESC"
    :height 1080
    :scene {:fx/type :scene
            :fill :transparent
-           :stylesheets #{"styles.css"}
+           ;; TODO: Maybe load dynamically to allow dark or light themes?
+           ;; :stylesheets #{"styles.css"}
            :root {:fx/type :v-box
                   ;; :alignment :top
                   ;; :style {
