@@ -233,13 +233,14 @@ ORDER BY priority, createdDate DESC"
      {:text (format "[%s] (%s) %s {%s}" status (util/beginning-of-string 12 id) title provider)})
    :items tickets-filtered})
 
-(defn text-input-slim [{:keys [label text event-type]}]
+(defn text-input-slim [{:keys [label text event-type min-width]}]
   {:fx/type :h-box
    :children
    [{:fx/type :label :text label}
     {:fx/type :text-field
      :on-text-changed {:event/type event-type}
      :on-key-pressed {:event/type ::text-input-slim-key}
+     :min-width (or min-width 100)
      :text text}]})
 
 (defn render-comment [{:keys [author email description date-created] :as _m}]
@@ -267,6 +268,7 @@ ORDER BY priority, createdDate DESC"
    {:fx/type text-input-slim
     :event-type ::set-direct-ticket-id
     :label "Title:"
+    :min-width 500
     :text title}
    {:fx/type text-input :label "Description:" :text description}
    {:fx/type :label :text "Comments:"}
